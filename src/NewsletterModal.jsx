@@ -129,7 +129,7 @@ export default function NewsletterModal({ onClose, quelle = 'topbar', showGutsch
             <div className="gutschein-icon">🎁</div>
             <div>
               <div className="gutschein-title">CHF 10 geschenkt!</div>
-              <div className="gutschein-sub">Trag dich ein und kriege deinen Willkommens-Gutschein per E-Mail.</div>
+              <div className="gutschein-sub">Trag deine E-Mail ein und kriege den Gutschein per Mail.</div>
             </div>
           </div>
         )}
@@ -139,8 +139,8 @@ export default function NewsletterModal({ onClose, quelle = 'topbar', showGutsch
         </h2>
         <p className="sub ui">
           {showGutschein
-            ? 'Sag uns, was du suchst – wir benachrichtigen dich bei passenden Neuzugängen.'
-            : 'Wir melden uns, sobald passende Artikel reinkommen.'}
+            ? 'Erhalte exklusive Neuzugänge und Aktionen direkt in dein Postfach.'
+            : 'Sag uns, was du suchst – wir melden uns, sobald passende Artikel reinkommen.'}
         </p>
 
         <form onSubmit={submit} className="ui">
@@ -157,43 +157,47 @@ export default function NewsletterModal({ onClose, quelle = 'topbar', showGutsch
             </div>
           </div>
 
-          <div className="field">
-            <label>Welche Kategorien interessieren dich?</label>
-            <div className="kat-grid">
-              {KATEGORIEN.map(k => (
-                <button
-                  type="button"
-                  key={k}
-                  onClick={() => toggleKat(k)}
-                  className={`kat-pill ${form.kategorien.includes(k) ? 'active' : ''}`}
-                >
-                  {k.replace(/Kleidung /, 'K. ').replace(/\(.*\)/, '').trim()}
-                </button>
-              ))}
-            </div>
-          </div>
+          {!showGutschein && (
+            <>
+              <div className="field">
+                <label>Welche Kategorien interessieren dich?</label>
+                <div className="kat-grid">
+                  {KATEGORIEN.map(k => (
+                    <button
+                      type="button"
+                      key={k}
+                      onClick={() => toggleKat(k)}
+                      className={`kat-pill ${form.kategorien.includes(k) ? 'active' : ''}`}
+                    >
+                      {k.replace(/Kleidung /, 'K. ').replace(/\(.*\)/, '').trim()}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            <div className="field">
-              <label>Grössen (durch Komma trennen)</label>
-              <input type="text" value={form.groessen}
-                onChange={e => setForm({...form, groessen: e.target.value})}
-                placeholder="z.B. 116, 122, 128" />
-            </div>
-            <div className="field">
-              <label>Marken (optional)</label>
-              <input type="text" value={form.marken}
-                onChange={e => setForm({...form, marken: e.target.value})}
-                placeholder="z.B. Lego, H&M" />
-            </div>
-          </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div className="field">
+                  <label>Grössen (durch Komma trennen)</label>
+                  <input type="text" value={form.groessen}
+                    onChange={e => setForm({...form, groessen: e.target.value})}
+                    placeholder="z.B. 116, 122, 128" />
+                </div>
+                <div className="field">
+                  <label>Marken (optional)</label>
+                  <input type="text" value={form.marken}
+                    onChange={e => setForm({...form, marken: e.target.value})}
+                    placeholder="z.B. Lego, H&M" />
+                </div>
+              </div>
 
-          <div className="field">
-            <label>Was suchst du sonst noch? (Stichwörter)</label>
-            <input type="text" value={form.tags}
-              onChange={e => setForm({...form, tags: e.target.value})}
-              placeholder="z.B. Strider, Reitstiefel, Hochstuhl" />
-          </div>
+              <div className="field">
+                <label>Was suchst du sonst noch? (Stichwörter)</label>
+                <input type="text" value={form.tags}
+                  onChange={e => setForm({...form, tags: e.target.value})}
+                  placeholder="z.B. Strider, Reitstiefel, Hochstuhl" />
+              </div>
+            </>
+          )}
 
           {err && <div style={{ color: 'var(--error)', fontSize: 13, marginBottom: 12 }}>{err}</div>}
 
@@ -207,7 +211,9 @@ export default function NewsletterModal({ onClose, quelle = 'topbar', showGutsch
           </div>
 
           <p style={{ fontSize: 12, color: 'var(--muted)', marginTop: 16, lineHeight: 1.5 }}>
-            Du erhältst nur Mails zu Artikeln, die zu deinen Wünschen passen. Jederzeit abbestellbar.
+            {showGutschein
+              ? 'Wir senden dir den Gutschein-Code + ab und zu Neuigkeiten. Jederzeit abbestellbar.'
+              : 'Du erhältst nur Mails zu Artikeln, die zu deinen Wünschen passen. Jederzeit abbestellbar.'}
           </p>
         </form>
       </div>

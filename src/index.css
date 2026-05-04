@@ -93,27 +93,17 @@ img {
 .topbar-logo {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 26px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--text);
 }
 
 .topbar-logo-img {
-  height: 44px;
+  height: 56px;
   width: auto;
   flex-shrink: 0;
+  transition: transform .2s;
 }
 
-.topbar-logo-text {
-  display: inline-block;
-}
-
-.topbar-logo .accent {
-  color: var(--accent);
-  font-style: italic;
+.topbar-logo:hover .topbar-logo-img {
+  transform: scale(1.03);
 }
 
 .topbar-info {
@@ -165,15 +155,14 @@ img {
 
 @media (max-width: 640px) {
   .topbar-info { display: none; }
-  .topbar-logo { font-size: 22px; gap: 8px; }
-  .topbar-logo-img { height: 36px; }
+  .topbar-logo-img { height: 44px; }
   .btn-topbar { padding: 6px 12px; font-size: 12px; }
 }
 
 @media (max-width: 480px) {
   .topbar-actions { gap: 8px; }
   .btn-topbar { padding: 6px 10px; font-size: 11px; }
-  .topbar-logo-text { display: none; }  /* nur Logo-Bild bei sehr kleinen Screens */
+  .topbar-logo-img { height: 38px; }
 }
 
 /* ─── Newsletter-Modal ─── */

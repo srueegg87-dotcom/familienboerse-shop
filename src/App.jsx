@@ -226,10 +226,7 @@ export function Topbar() {
       <div className="topbar">
         <div className="container topbar-inner">
           <a href="/" className="topbar-logo">
-            <img src="/logo.png" alt="Familienbörse" className="topbar-logo-img" />
-            <span className="topbar-logo-text">
-              Rüegg's <span className="accent">Familienbörse</span>
-            </span>
+            <img src="/logo.png" alt="Rüegg's Familienbörse" className="topbar-logo-img" />
           </a>
           <div className="topbar-actions ui">
             <div className="topbar-info">
