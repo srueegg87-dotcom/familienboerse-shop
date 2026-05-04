@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase, SUPABASE_BASE_URL } from './supabaseClient'
+import NewsletterModal from './NewsletterModal'
+import NewsletterPopup from './NewsletterPopup'
 
 // Kategorien-Reihenfolge für die Filter-Pills (oberste sind die wichtigsten)
 const FILTER_CATS = [
@@ -209,33 +211,50 @@ export default function App() {
       </main>
 
       <Footer />
+      <NewsletterPopup />
     </>
   )
 }
 
 export function Topbar() {
+  const [showNewsletter, setShowNewsletter] = useState(false)
   return (
-    <div className="topbar">
-      <div className="container topbar-inner">
-        <a href="/" className="topbar-logo">
-          Rüegg's <span className="accent">Familienbörse</span>
-        </a>
-        <div className="topbar-actions ui">
-          <div className="topbar-info">
-            <span>📍 Gommiswald</span>
-            <span>📞 076 200 90 04</span>
-          </div>
-          <a
-            href="https://vendor-portal-ie8v.vercel.app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-topbar"
-          >
-            Lieferanten-Login →
+    <>
+      <div className="topbar">
+        <div className="container topbar-inner">
+          <a href="/" className="topbar-logo">
+            Rüegg's <span className="accent">Familienbörse</span>
           </a>
+          <div className="topbar-actions ui">
+            <div className="topbar-info">
+              <span>📍 Gommiswald</span>
+              <span>📞 076 200 90 04</span>
+            </div>
+            <button
+              onClick={() => setShowNewsletter(true)}
+              className="btn-topbar btn-topbar-secondary"
+            >
+              🔔 Benachrichtigen
+            </button>
+            <a
+              href="https://vendor-portal-ie8v.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-topbar"
+            >
+              Lieferanten-Login →
+            </a>
+          </div>
         </div>
       </div>
-    </div>
+      {showNewsletter && (
+        <NewsletterModal
+          onClose={() => setShowNewsletter(false)}
+          quelle="topbar"
+          showGutschein={false}
+        />
+      )}
+    </>
   )
 }
 

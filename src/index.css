@@ -116,10 +116,12 @@ img {
   padding: 8px 16px;
   background: var(--accent);
   color: white;
+  border: none;
   border-radius: 999px;
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
+  cursor: pointer;
   transition: all .15s;
   white-space: nowrap;
 }
@@ -129,10 +131,106 @@ img {
   transform: translateY(-1px);
 }
 
+.btn-topbar-secondary {
+  background: var(--surface);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.btn-topbar-secondary:hover {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+}
+
 @media (max-width: 640px) {
   .topbar-info { display: none; }
   .topbar-logo { font-size: 22px; }
   .btn-topbar { padding: 6px 12px; font-size: 12px; }
+}
+
+@media (max-width: 480px) {
+  .topbar-actions { gap: 8px; }
+  .btn-topbar { padding: 6px 10px; font-size: 11px; }
+}
+
+/* ─── Newsletter-Modal ─── */
+.modal-wide {
+  max-width: 560px;
+}
+
+.gutschein-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  margin: -32px -32px 24px -32px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  color: white;
+}
+
+.gutschein-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.gutschein-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.gutschein-sub {
+  font-size: 13px;
+  opacity: 0.95;
+  margin-top: 4px;
+}
+
+.kat-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.kat-pill {
+  font-family: 'Inter', sans-serif;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-soft);
+  color: var(--text-soft);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+
+.kat-pill:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.kat-pill.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+@media (max-width: 480px) {
+  .modal-wide {
+    max-width: 95%;
+  }
+  .gutschein-banner {
+    padding: 12px 16px;
+    margin: -24px -24px 16px -24px;
+  }
+  .modal {
+    padding: 24px !important;
+  }
 }
 
 /* ─── Hero ─── */
