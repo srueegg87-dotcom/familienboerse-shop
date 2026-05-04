@@ -220,9 +220,19 @@ export function Topbar() {
         <a href="/" className="topbar-logo">
           Rüegg's <span className="accent">Familienbörse</span>
         </a>
-        <div className="topbar-info ui">
-          <span>📍 Gommiswald</span>
-          <span>📞 076 200 90 04</span>
+        <div className="topbar-actions ui">
+          <div className="topbar-info">
+            <span>📍 Gommiswald</span>
+            <span>📞 076 200 90 04</span>
+          </div>
+          <a
+            href="https://vendor-portal-ie8v.vercel.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-topbar"
+          >
+            Lieferanten-Login →
+          </a>
         </div>
       </div>
     </div>
@@ -253,6 +263,20 @@ export function Footer() {
             <h4>Über uns</h4>
             <p style={{ margin: 0 }}>
               Konsignation für Familien in der Schweiz. Secondhand mit Liebe ausgewählt + sorgfältig kuratierte Neuware.
+            </p>
+          </div>
+          <div>
+            <h4>Für Lieferanten</h4>
+            <p style={{ margin: 0 }}>
+              <a
+                href="https://vendor-portal-ie8v.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: 'var(--accent)', textDecoration: 'underline' }}
+              >
+                Lieferanten-Portal →
+              </a><br />
+              Artikel einliefern + Auszahlungen einsehen.
             </p>
           </div>
         </div>
