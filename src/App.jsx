@@ -120,7 +120,10 @@ export default function App() {
       <Topbar />
 
       <section className="hero">
+        <div className="hero-decoration hero-decoration-left" aria-hidden="true">✦</div>
+        <div className="hero-decoration hero-decoration-right" aria-hidden="true">✦</div>
         <div className="container">
+          <div className="hero-tagline ui">♡ Mit Liebe kuratiert seit 2023</div>
           <h1>Familien-Schätze für <em>Familien</em></h1>
           <p className="sub">
             Secondhand & Neuware · Konsignation in Gommiswald
@@ -223,7 +226,10 @@ export function Topbar() {
       <div className="topbar">
         <div className="container topbar-inner">
           <a href="/" className="topbar-logo">
-            Rüegg's <span className="accent">Familienbörse</span>
+            <img src="/logo.png" alt="Familienbörse" className="topbar-logo-img" />
+            <span className="topbar-logo-text">
+              Rüegg's <span className="accent">Familienbörse</span>
+            </span>
           </a>
           <div className="topbar-actions ui">
             <div className="topbar-info">
