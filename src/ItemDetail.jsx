@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase, SUPABASE_BASE_URL } from './supabaseClient'
 import { Topbar, Footer } from './App'
+import { useCart } from './CartContext'
 
 export default function ItemDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const cart = useCart()
   const [item, setItem] = useState(null)
   const [photos, setPhotos] = useState([])
   const [activePhoto, setActivePhoto] = useState(0)
@@ -133,11 +135,21 @@ export default function ItemDetail() {
             )}
 
             <div className="detail-actions ui">
-              <button className="btn btn-primary" onClick={() => setShowReserve(true)}>
-                Reservieren & abholen
-              </button>
-              <button className="btn btn-secondary" onClick={() => setShowBuy(true)}>
-                Direkt kaufen
+              {cart.has(item.id) ? (
+                <button className="btn btn-primary" onClick={() => navigate('/checkout')}>
+                  ✓ Im Warenkorb — zur Kasse
+                </button>
+              ) : (
+                <button className="btn btn-primary" onClick={() => cart.add({
+                  id: item.id, name: item.name, price: item.price,
+                  category: item.category, size: item.size, brand: item.brand,
+                  photo: photos[0] || null, sku: item.sku, vendor_id: item.vendor_id, vendor_name: item.vendor_name,
+                })}>
+                  🛍️ In den Warenkorb
+                </button>
+              )}
+              <button className="btn btn-secondary" onClick={() => setShowReserve(true)}>
+                Nur reservieren
               </button>
             </div>
 

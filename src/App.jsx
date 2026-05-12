@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase, SUPABASE_BASE_URL } from './supabaseClient'
 import NewsletterModal from './NewsletterModal'
 import NewsletterPopup from './NewsletterPopup'
+import { useCart } from './CartContext'
 
 // Kategorien-Reihenfolge für die Filter-Pills (oberste sind die wichtigsten)
 const FILTER_CATS = [
@@ -39,6 +40,7 @@ const PRICE_RANGES = [
 
 export default function App() {
   const navigate = useNavigate()
+  const cart = useCart()
   const [items, setItems] = useState([])
   const [photos, setPhotos] = useState({}) // item_id -> first photo url
   const [loading, setLoading] = useState(true)
@@ -216,7 +218,17 @@ export default function App() {
                 </div>
               )}
               <div className="grid">
-                {shownItems.map(item => (
+                {shownItems.map(item => {
+                  const inCart = cart.has(item.id)
+                  const addToCart = (e) => {
+                    e.stopPropagation()
+                    cart.add({
+                      id: item.id, name: item.name, price: item.price,
+                      category: item.category, size: item.size, brand: item.brand,
+                      photo: photos[item.id] || null, sku: item.sku, vendor_id: item.vendor_id, vendor_name: item.vendor_name,
+                    })
+                  }
+                  return (
                   <div key={item.id} className="card" onClick={() => navigate(`/artikel/${item.id}`)}>
                     <div className="card-img">
                       {photos[item.id] ? (
@@ -233,10 +245,21 @@ export default function App() {
                     <div className="card-info">
                       <div className="card-cat">{item.category}{item.size && ` · ${item.size}`}</div>
                       <div className="card-name">{item.name}</div>
-                      <div className="card-price">CHF {Number(item.price).toFixed(2)}</div>
+                      <div className="card-price-row">
+                        <div className="card-price">CHF {Number(item.price).toFixed(2)}</div>
+                        <button
+                          className={`card-add ${inCart ? 'in-cart' : ''}`}
+                          onClick={addToCart}
+                          disabled={inCart}
+                          aria-label={inCart ? 'Im Warenkorb' : 'In den Warenkorb'}
+                        >
+                          {inCart ? '✓' : '+'}
+                        </button>
+                      </div>
                     </div>
                   </div>
-                ))}
+                  )
+                })}
               </div>
               {!showFull && items.length > 4 && (
                 <div className="preview-cta">
@@ -446,6 +469,7 @@ function VisitUs() {
 
 export function Topbar() {
   const [showNewsletter, setShowNewsletter] = useState(false)
+  const { count, setOpen } = useCart()
   return (
     <>
       <a href="https://partyladen.ch" target="_blank" rel="noopener noreferrer" className="partyladen-strip">
@@ -475,13 +499,21 @@ export function Topbar() {
             >
               🔔 Benachrichtigen
             </button>
+            <button
+              onClick={() => setOpen(true)}
+              className="btn-topbar btn-topbar-cart"
+              aria-label={`Warenkorb (${count})`}
+            >
+              🛍️
+              {count > 0 && <span className="cart-badge">{count}</span>}
+            </button>
             <a
               href="https://vendor-portal-ie8v.vercel.app"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-topbar"
+              className="btn-topbar btn-topbar-vendor"
             >
-              Lieferanten-Login →
+              Lieferanten →
             </a>
           </div>
         </div>
