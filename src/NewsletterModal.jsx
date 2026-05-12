@@ -103,7 +103,7 @@ export default function NewsletterModal({ onClose, quelle = 'topbar', showGutsch
             </h2>
             <p style={{ color: 'var(--text-soft)' }}>
               {showGutschein ? (
-                <>Dein <strong>CHF 10 Willkommens-Gutschein</strong> kommt per E-Mail zu dir.<br />
+                <>Dein <strong>10 % Willkommens-Gutschein</strong> kommt per E-Mail zu dir.<br />
                 Gültig bei Abholung im Laden.</>
               ) : (
                 <>Wir benachrichtigen dich, sobald passende Artikel reinkommen.</>
@@ -128,7 +128,7 @@ export default function NewsletterModal({ onClose, quelle = 'topbar', showGutsch
           <div className="gutschein-banner ui">
             <div className="gutschein-icon">🎁</div>
             <div>
-              <div className="gutschein-title">CHF 10 geschenkt!</div>
+              <div className="gutschein-title">10 % Rabatt geschenkt!</div>
               <div className="gutschein-sub">Trag deine E-Mail ein und kriege den Gutschein per Mail.</div>
             </div>
           </div>

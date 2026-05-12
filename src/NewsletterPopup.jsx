@@ -56,7 +56,7 @@ export default function NewsletterPopup() {
           <button className="teaser-close" onClick={dismissTeaser} aria-label="Schliessen">×</button>
           <div className="teaser-icon">🎁</div>
           <div className="teaser-content">
-            <div className="teaser-title">CHF 10 geschenkt!</div>
+            <div className="teaser-title">10 % Rabatt geschenkt!</div>
             <div className="teaser-sub">Newsletter abonnieren + Gutschein sichern.</div>
           </div>
           <button className="teaser-cta" onClick={openModal}>
