@@ -145,90 +145,102 @@ export default function App() {
       </section>
 
       <main className="container">
-        {/* Filter-Leiste — nur wenn aufgeklappt */}
-        {expanded && (
-          <div className="filterbar ui">
-            <input
-              type="search"
-              placeholder="Suche nach Marke, Größe, Artikel..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="search-input"
-            />
-            <select value={cat} onChange={e => setCat(e.target.value)} className="filter-select">
-              {FILTER_CATS.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
-            <select value={priceIdx} onChange={e => setPriceIdx(Number(e.target.value))} className="filter-select">
-              {PRICE_RANGES.map((p, i) => <option key={i} value={i}>{p.label}</option>)}
-            </select>
-            <select value={sort} onChange={e => setSort(e.target.value)} className="filter-select">
-              <option value="neueste">Neueste zuerst</option>
-              <option value="preis-aufsteigend">Preis aufsteigend</option>
-              <option value="preis-absteigend">Preis absteigend</option>
-            </select>
-          </div>
-        )}
+        {/* Filter-Leiste — immer sichtbar */}
+        <div className="filterbar ui">
+          <input
+            type="search"
+            placeholder="Suche nach Marke, Größe, Artikel..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="search-input"
+          />
+          <select value={cat} onChange={e => setCat(e.target.value)} className="filter-select">
+            {FILTER_CATS.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+          <select value={priceIdx} onChange={e => setPriceIdx(Number(e.target.value))} className="filter-select">
+            {PRICE_RANGES.map((p, i) => <option key={i} value={i}>{p.label}</option>)}
+          </select>
+          <select value={sort} onChange={e => setSort(e.target.value)} className="filter-select">
+            <option value="neueste">Neueste zuerst</option>
+            <option value="preis-aufsteigend">Preis aufsteigend</option>
+            <option value="preis-absteigend">Preis absteigend</option>
+          </select>
+        </div>
 
-        {/* Item-Grid */}
-        {loading ? (
-          <div className="loading">
-            <div className="loading-spinner"></div>
-            <div>Schaufenster wird vorbereitet…</div>
-          </div>
-        ) : expanded && filtered.length === 0 ? (
-          <div className="empty">
-            <p style={{ fontSize: 18, fontFamily: 'Cormorant Garamond, serif' }}>
-              Keine Artikel mit diesen Filtern gefunden.
-            </p>
-            <button className="btn btn-secondary" onClick={() => { setSearch(''); setCat('Alle'); setPriceIdx(0); }} style={{ marginTop: 12 }}>
-              Filter zurücksetzen
-            </button>
-          </div>
-        ) : (
-          <>
-            {!expanded ? (
-              <div className="preview-head">
-                <span className="section-eyebrow">✨ Neu im Schaufenster</span>
-                <h2 className="section-title">Frisch eingetroffen</h2>
-                <p className="section-sub">Ein kleiner Vorgeschmack — der ganze Laden wartet weiter unten.</p>
+        {/* Wenn gefiltert/gesucht wird, automatisch alle Treffer zeigen */}
+        {(() => {
+          const filtersActive = search.trim() !== '' || cat !== 'Alle' || priceIdx !== 0 || sort !== 'neueste'
+          const showFull = expanded || filtersActive
+          const shownItems = showFull ? filtered : items.slice(0, 4)
+
+          if (loading) {
+            return (
+              <div className="loading">
+                <div className="loading-spinner"></div>
+                <div>Schaufenster wird vorbereitet…</div>
               </div>
-            ) : (
-              <div style={{ marginBottom: 16, fontSize: 14, color: 'var(--text-soft)', fontFamily: 'Inter' }}>
-                {filtered.length} {filtered.length === 1 ? 'Treffer' : 'Treffer'}
-              </div>
-            )}
-            <div className="grid">
-              {(expanded ? filtered : items.slice(0, 4)).map(item => (
-                <div key={item.id} className="card" onClick={() => navigate(`/artikel/${item.id}`)}>
-                  <div className="card-img">
-                    {photos[item.id] ? (
-                      <img src={photos[item.id]} alt={item.name} loading="lazy" />
-                    ) : (
-                      <span className="card-img-placeholder">·· ·</span>
-                    )}
-                    {item.brand && item.brand !== 'Unbekannt' && item.brand !== 'Unknown' && item.brand !== 'Nicht bekannt' && (
-                      <div className="card-img-badges">
-                        <span className="badge brand">{item.brand}</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="card-info">
-                    <div className="card-cat">{item.category}{item.size && ` · ${item.size}`}</div>
-                    <div className="card-name">{item.name}</div>
-                    <div className="card-price">CHF {Number(item.price).toFixed(2)}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            {!expanded && items.length > 4 && (
-              <div className="preview-cta">
-                <button className="btn-show-all ui" onClick={() => setExpanded(true)}>
-                  Alle {items.length} Artikel anzeigen →
+            )
+          }
+
+          if (showFull && filtered.length === 0) {
+            return (
+              <div className="empty">
+                <p style={{ fontSize: 18, fontFamily: 'Cormorant Garamond, serif' }}>
+                  Keine Artikel mit diesen Filtern gefunden.
+                </p>
+                <button className="btn btn-secondary" onClick={() => { setSearch(''); setCat('Alle'); setPriceIdx(0); setSort('neueste'); }} style={{ marginTop: 12 }}>
+                  Filter zurücksetzen
                 </button>
               </div>
-            )}
-          </>
-        )}
+            )
+          }
+
+          return (
+            <>
+              {!showFull ? (
+                <div className="preview-head">
+                  <span className="section-eyebrow">✨ Neu im Schaufenster</span>
+                  <h2 className="section-title">Frisch eingetroffen</h2>
+                  <p className="section-sub">Ein kleiner Vorgeschmack — der ganze Laden wartet weiter unten.</p>
+                </div>
+              ) : (
+                <div style={{ marginBottom: 16, fontSize: 14, color: 'var(--text-soft)', fontFamily: 'Inter' }}>
+                  {filtered.length} {filtered.length === 1 ? 'Treffer' : 'Treffer'}
+                </div>
+              )}
+              <div className="grid">
+                {shownItems.map(item => (
+                  <div key={item.id} className="card" onClick={() => navigate(`/artikel/${item.id}`)}>
+                    <div className="card-img">
+                      {photos[item.id] ? (
+                        <img src={photos[item.id]} alt={item.name} loading="lazy" />
+                      ) : (
+                        <span className="card-img-placeholder">·· ·</span>
+                      )}
+                      {item.brand && item.brand !== 'Unbekannt' && item.brand !== 'Unknown' && item.brand !== 'Nicht bekannt' && (
+                        <div className="card-img-badges">
+                          <span className="badge brand">{item.brand}</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="card-info">
+                      <div className="card-cat">{item.category}{item.size && ` · ${item.size}`}</div>
+                      <div className="card-name">{item.name}</div>
+                      <div className="card-price">CHF {Number(item.price).toFixed(2)}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {!showFull && items.length > 4 && (
+                <div className="preview-cta">
+                  <button className="btn-show-all ui" onClick={() => setExpanded(true)}>
+                    Alle {items.length} Artikel anzeigen →
+                  </button>
+                </div>
+              )}
+            </>
+          )
+        })()}
       </main>
 
       <HowItWorks />
