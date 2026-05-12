@@ -11,9 +11,13 @@ export default function CheckoutPage() {
   const navigate = useNavigate()
 
   const [form, setForm] = useState({
-    customer_name: '', customer_email: '', customer_phone: '',
+    customer_first_name: '', customer_last_name: '',
+    customer_email: '', customer_phone: '',
+    billing_address: '', billing_zip: '', billing_city: '',
     delivery_type: 'pickup',
-    shipping_name: '', shipping_address: '', shipping_zip: '', shipping_city: '',
+    different_shipping: false,
+    shipping_first_name: '', shipping_last_name: '',
+    shipping_address: '', shipping_zip: '', shipping_city: '',
     payment_method: 'cash_pickup',
     notiz: '',
   })
@@ -54,12 +58,15 @@ export default function CheckoutPage() {
   const removeVoucher = () => { setVoucherInfo(null); setVoucherCode(''); setVoucherErr('') }
 
   const validate = () => {
-    if (!form.customer_name.trim()) return 'Bitte Name eintragen.'
+    if (!form.customer_first_name.trim()) return 'Bitte Vornamen eintragen.'
+    if (!form.customer_last_name.trim()) return 'Bitte Nachnamen eintragen.'
     if (!form.customer_email.trim() || !form.customer_email.includes('@')) return 'Bitte gültige E-Mail eintragen.'
-    if (form.delivery_type === 'shipping') {
-      if (!form.shipping_name.trim()) return 'Bitte Versandadresse (Name) eintragen.'
-      if (!form.shipping_address.trim()) return 'Bitte Strasse / Hausnummer eintragen.'
-      if (!form.shipping_zip.trim() || !form.shipping_city.trim()) return 'Bitte PLZ und Ort eintragen.'
+    if (!form.billing_address.trim()) return 'Bitte Strasse und Hausnummer eintragen.'
+    if (!form.billing_zip.trim() || !form.billing_city.trim()) return 'Bitte PLZ und Ort eintragen.'
+    if (form.delivery_type === 'shipping' && form.different_shipping) {
+      if (!form.shipping_first_name.trim() || !form.shipping_last_name.trim()) return 'Bitte Vor- und Nachname für die Lieferadresse eintragen.'
+      if (!form.shipping_address.trim()) return 'Bitte Strasse / Hausnummer für die Lieferadresse eintragen.'
+      if (!form.shipping_zip.trim() || !form.shipping_city.trim()) return 'Bitte PLZ und Ort für die Lieferadresse eintragen.'
     }
     return null
   }
@@ -76,19 +83,34 @@ export default function CheckoutPage() {
       const { data: nr } = await supabase.rpc('get_next_online_order_nr')
 
       // 2) Bestellung anlegen
+      const useShippingAddr = form.delivery_type === 'shipping'
+      const useDifferent = useShippingAddr && form.different_shipping
+      const shipFirst = useDifferent ? form.shipping_first_name.trim() : form.customer_first_name.trim()
+      const shipLast  = useDifferent ? form.shipping_last_name.trim()  : form.customer_last_name.trim()
+      const shipAddr  = useDifferent ? form.shipping_address.trim()    : form.billing_address.trim()
+      const shipZip   = useDifferent ? form.shipping_zip.trim()        : form.billing_zip.trim()
+      const shipCity  = useDifferent ? form.shipping_city.trim()       : form.billing_city.trim()
+
       const orderRow = {
         order_nr: nr,
-        customer_name: form.customer_name.trim(),
+        customer_first_name: form.customer_first_name.trim(),
+        customer_last_name: form.customer_last_name.trim(),
+        customer_name: `${form.customer_first_name.trim()} ${form.customer_last_name.trim()}`,
         customer_email: form.customer_email.trim().toLowerCase(),
         customer_phone: form.customer_phone.trim() || null,
+        billing_address: form.billing_address.trim(),
+        billing_zip: form.billing_zip.trim(),
+        billing_city: form.billing_city.trim(),
         delivery_type: form.delivery_type,
-        shipping_name: form.delivery_type === 'shipping' ? form.shipping_name.trim() : null,
-        shipping_address: form.delivery_type === 'shipping' ? form.shipping_address.trim() : null,
-        shipping_zip: form.delivery_type === 'shipping' ? form.shipping_zip.trim() : null,
-        shipping_city: form.delivery_type === 'shipping' ? form.shipping_city.trim() : null,
+        shipping_first_name: useShippingAddr ? shipFirst : null,
+        shipping_last_name: useShippingAddr ? shipLast : null,
+        shipping_name: useShippingAddr ? `${shipFirst} ${shipLast}` : null,
+        shipping_address: useShippingAddr ? shipAddr : null,
+        shipping_zip: useShippingAddr ? shipZip : null,
+        shipping_city: useShippingAddr ? shipCity : null,
         shipping_cost: shippingCost,
         payment_method: form.payment_method,
-        payment_status: form.payment_method === 'online' ? 'pending' : 'pending',
+        payment_status: 'pending',
         subtotal,
         discount_amount: voucherDiscount,
         total,
@@ -165,12 +187,20 @@ export default function CheckoutPage() {
           <form onSubmit={submit} className="checkout-form">
 
             <section className="checkout-section">
-              <h2>Deine Kontaktdaten</h2>
+              <h2>Deine Daten</h2>
+              <div className="form-row form-row-2">
+                <label>Vorname *<input type="text" value={form.customer_first_name} onChange={e => set('customer_first_name', e.target.value)} required /></label>
+                <label>Nachname *<input type="text" value={form.customer_last_name} onChange={e => set('customer_last_name', e.target.value)} required /></label>
+              </div>
               <div className="form-row">
-                <label>Name / Vorname<input type="text" value={form.customer_name} onChange={e => set('customer_name', e.target.value)} required /></label>
+                <label>Strasse und Hausnummer *<input type="text" value={form.billing_address} onChange={e => set('billing_address', e.target.value)} required placeholder="z.B. Bahnhofstrasse 12" /></label>
               </div>
               <div className="form-row form-row-2">
-                <label>E-Mail<input type="email" value={form.customer_email} onChange={e => set('customer_email', e.target.value)} required /></label>
+                <label>PLZ *<input type="text" value={form.billing_zip} onChange={e => set('billing_zip', e.target.value)} required pattern="[0-9]{4}" placeholder="8737" /></label>
+                <label>Ort *<input type="text" value={form.billing_city} onChange={e => set('billing_city', e.target.value)} required placeholder="Gommiswald" /></label>
+              </div>
+              <div className="form-row form-row-2">
+                <label>E-Mail *<input type="email" value={form.customer_email} onChange={e => set('customer_email', e.target.value)} required /></label>
                 <label>Telefon (optional)<input type="tel" value={form.customer_phone} onChange={e => set('customer_phone', e.target.value)} /></label>
               </div>
             </section>
@@ -197,14 +227,25 @@ export default function CheckoutPage() {
               </div>
 
               {form.delivery_type === 'shipping' && (
-                <div className="address-fields">
-                  <div className="form-row"><label>Name auf dem Paket<input type="text" value={form.shipping_name} onChange={e => set('shipping_name', e.target.value)} required /></label></div>
-                  <div className="form-row"><label>Strasse / Hausnummer<input type="text" value={form.shipping_address} onChange={e => set('shipping_address', e.target.value)} required /></label></div>
-                  <div className="form-row form-row-2">
-                    <label>PLZ<input type="text" value={form.shipping_zip} onChange={e => set('shipping_zip', e.target.value)} required pattern="[0-9]{4}" /></label>
-                    <label>Ort<input type="text" value={form.shipping_city} onChange={e => set('shipping_city', e.target.value)} required /></label>
-                  </div>
-                </div>
+                <>
+                  <label className="checkbox-row">
+                    <input type="checkbox" checked={form.different_shipping} onChange={e => set('different_shipping', e.target.checked)} />
+                    <span>Lieferadresse weicht von der oben angegebenen Adresse ab</span>
+                  </label>
+                  {form.different_shipping && (
+                    <div className="address-fields">
+                      <div className="form-row form-row-2">
+                        <label>Vorname *<input type="text" value={form.shipping_first_name} onChange={e => set('shipping_first_name', e.target.value)} required /></label>
+                        <label>Nachname *<input type="text" value={form.shipping_last_name} onChange={e => set('shipping_last_name', e.target.value)} required /></label>
+                      </div>
+                      <div className="form-row"><label>Strasse und Hausnummer *<input type="text" value={form.shipping_address} onChange={e => set('shipping_address', e.target.value)} required /></label></div>
+                      <div className="form-row form-row-2">
+                        <label>PLZ *<input type="text" value={form.shipping_zip} onChange={e => set('shipping_zip', e.target.value)} required pattern="[0-9]{4}" /></label>
+                        <label>Ort *<input type="text" value={form.shipping_city} onChange={e => set('shipping_city', e.target.value)} required /></label>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </section>
 

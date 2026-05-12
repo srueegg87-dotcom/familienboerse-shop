@@ -2150,3 +2150,18 @@ img {
   font-family: 'Inter', sans-serif;
 }
 .btn-primary:hover { background: var(--accent-dark); }
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  margin-top: 14px;
+  background: var(--bg-soft);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+.checkbox-row input { accent-color: var(--accent); }
