@@ -90,9 +90,20 @@ img {
   gap: 24px;
 }
 
+.topbar-logos {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
 .topbar-logo {
   display: flex;
   align-items: center;
+  transition: opacity 0.15s;
+}
+
+.topbar-logo:hover {
+  opacity: 0.8;
 }
 
 .topbar-logo-img {
@@ -104,6 +115,20 @@ img {
 
 .topbar-logo:hover .topbar-logo-img {
   transform: scale(1.03);
+}
+
+.topbar-logo-divider {
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--border);
+  user-select: none;
+}
+
+.topbar-logo-party-img {
+  height: 28px;
+  width: auto;
+  display: block;
 }
 
 .topbar-info {
@@ -156,6 +181,9 @@ img {
 @media (max-width: 640px) {
   .topbar-info { display: none; }
   .topbar-logo-img { height: 44px; }
+  .topbar-logo-party-img { height: 22px; }
+  .topbar-logo-divider { font-size: 14px; }
+  .topbar-logos { gap: 8px; }
   .btn-topbar { padding: 6px 12px; font-size: 12px; }
 }
 
@@ -163,6 +191,8 @@ img {
   .topbar-actions { gap: 8px; }
   .btn-topbar { padding: 6px 10px; font-size: 11px; }
   .topbar-logo-img { height: 38px; }
+  .topbar-logo-divider { display: none; }
+  .topbar-logo-party { display: none; }
 }
 
 /* ─── Newsletter-Modal ─── */

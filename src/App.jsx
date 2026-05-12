@@ -443,9 +443,15 @@ export function Topbar() {
     <>
       <div className="topbar">
         <div className="container topbar-inner">
-          <a href="/" className="topbar-logo">
-            <img src="/logo.png" alt="Rüegg's Familienbörse" className="topbar-logo-img" />
-          </a>
+          <div className="topbar-logos">
+            <a href="/" className="topbar-logo">
+              <img src="/logo.png" alt="Rüegg's Familienbörse" className="topbar-logo-img" />
+            </a>
+            <span className="topbar-logo-divider" aria-hidden="true">×</span>
+            <a href="https://partyladen.ch" target="_blank" rel="noopener noreferrer" className="topbar-logo topbar-logo-party" title="Auch unser Partyladen — alles für deine Feier">
+              <img src="/partyladen.png" alt="partyladen.ch" className="topbar-logo-party-img" />
+            </a>
+          </div>
           <div className="topbar-actions ui">
             <div className="topbar-info">
               <span>📍 Gommiswald</span>
