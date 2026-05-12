@@ -995,3 +995,302 @@ img {
 .card:hover {
   box-shadow: var(--shadow-lg) !important;
 }
+
+/* ─── Info-Sektionen unter dem Grid ─── */
+.info-section {
+  padding: 56px 0;
+}
+
+.info-section-soft {
+  background:
+    radial-gradient(ellipse at top right, var(--pastel-pink-soft) 0%, transparent 55%),
+    radial-gradient(ellipse at bottom left, var(--pastel-mint-soft) 0%, transparent 60%),
+    var(--bg-soft);
+}
+
+.section-head {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto 40px;
+}
+
+.section-eyebrow {
+  display: inline-block;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--surface);
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--accent-soft);
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.section-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(28px, 4.5vw, 42px);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: var(--text);
+  margin: 0 0 12px;
+  line-height: 1.15;
+}
+
+.section-sub {
+  font-size: 17px;
+  color: var(--text-soft);
+  margin: 0;
+  line-height: 1.55;
+}
+
+/* ─── Wie funktioniert das? ─── */
+.how-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.how-card {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: 32px 26px 28px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.how-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-xl);
+  pointer-events: none;
+}
+
+.how-card-pink { background: linear-gradient(160deg, var(--pastel-pink-soft) 0%, #fff 65%); }
+.how-card-mint { background: linear-gradient(160deg, var(--pastel-mint-soft) 0%, #fff 65%); }
+.how-card-yellow { background: linear-gradient(160deg, #fcf3dc 0%, #fff 65%); }
+
+.how-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.how-emoji {
+  font-size: 44px;
+  line-height: 1;
+  margin-bottom: 16px;
+  display: inline-block;
+  transition: transform 0.4s cubic-bezier(.34,1.56,.64,1);
+}
+
+.how-card:hover .how-emoji {
+  transform: scale(1.08) rotate(-4deg);
+}
+
+.how-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 10px;
+}
+
+.how-card p {
+  font-size: 15.5px;
+  color: var(--text-soft);
+  line-height: 1.6;
+  margin: 0;
+}
+
+@media (max-width: 880px) {
+  .how-grid { grid-template-columns: 1fr; gap: 16px; }
+  .how-card { padding: 24px 22px 22px; }
+}
+
+/* ─── Wanted-Banner ─── */
+.wanted-banner {
+  background:
+    radial-gradient(circle at 20% 20%, var(--pastel-yellow) 0%, transparent 55%),
+    radial-gradient(circle at 80% 80%, var(--pastel-pink-soft) 0%, transparent 55%),
+    linear-gradient(135deg, #fff 0%, var(--bg-soft) 100%);
+  border-radius: var(--radius-xl);
+  padding: 44px 36px;
+  text-align: center;
+  border: 1px solid var(--accent-soft);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+
+.wanted-stars {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  color: var(--accent);
+  letter-spacing: 0.6em;
+  margin-bottom: 10px;
+  opacity: 0.7;
+}
+
+.wanted-title {
+  margin-bottom: 22px;
+}
+
+.wanted-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 18px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.wanted-list li {
+  background: var(--surface);
+  border: 1px solid var(--accent-soft);
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--accent-dark);
+  box-shadow: var(--shadow-sm);
+}
+
+.wanted-foot {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 19px;
+  font-style: italic;
+  color: var(--text-soft);
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .wanted-banner { padding: 32px 22px; }
+  .wanted-list li { font-size: 13.5px; padding: 6px 14px; }
+}
+
+/* ─── Visit Us ─── */
+.visit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.visit-card {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: 30px 28px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+}
+
+.visit-card-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 18px;
+}
+
+.hours-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  margin-bottom: 16px;
+}
+
+.hours-table td {
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--border);
+  color: var(--text);
+}
+
+.hours-table tr:last-child td {
+  border-bottom: none;
+}
+
+.hours-table td:first-child {
+  font-weight: 500;
+  color: var(--text-soft);
+}
+
+.hours-table td:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.hours-closed {
+  color: var(--muted) !important;
+  font-style: italic;
+}
+
+.visit-tip {
+  background: var(--pastel-yellow);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  font-size: 13.5px;
+  color: var(--accent-dark);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.visit-intro {
+  font-size: 15.5px;
+  color: var(--text-soft);
+  margin: 0 0 12px;
+  line-height: 1.55;
+}
+
+.rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+}
+
+.rules-list li {
+  position: relative;
+  padding: 8px 0 8px 26px;
+  font-size: 14.5px;
+  color: var(--text);
+  line-height: 1.55;
+  border-bottom: 1px dashed var(--border);
+}
+
+.rules-list li:last-child {
+  border-bottom: none;
+}
+
+.rules-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  color: var(--success);
+  font-weight: 700;
+}
+
+.visit-note {
+  background: var(--pastel-pink-soft);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--text-soft);
+  margin: 0;
+  line-height: 1.5;
+  border-left: 3px solid var(--pastel-pink);
+}
+
+@media (max-width: 880px) {
+  .visit-grid { grid-template-columns: 1fr; gap: 16px; }
+  .visit-card { padding: 24px 22px; }
+}
+
+@media (max-width: 640px) {
+  .info-section { padding: 40px 0; }
+  .section-head { margin-bottom: 28px; }
+}

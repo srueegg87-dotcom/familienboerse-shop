@@ -213,9 +213,106 @@ export default function App() {
         )}
       </main>
 
+      <HowItWorks />
+      <WantedNow />
+      <VisitUs />
       <Footer />
       <NewsletterPopup />
     </>
+  )
+}
+
+function HowItWorks() {
+  return (
+    <section className="info-section info-section-soft">
+      <div className="container">
+        <div className="section-head">
+          <span className="section-eyebrow">♡ Familienbörse</span>
+          <h2 className="section-title">Wie das bei uns funktioniert</h2>
+          <p className="section-sub">Ganz unkompliziert, mit viel Liebe und einem grünen Daumen für die Umwelt.</p>
+        </div>
+        <div className="how-grid">
+          <div className="how-card how-card-pink">
+            <div className="how-emoji" aria-hidden="true">🧸</div>
+            <h3 className="how-title">Du findest Schätze</h3>
+            <p>Im Laden in Gommiswald und hier online warten sorgfältig ausgewählte Kindersachen auf ein neues Zuhause — secondhand mit Herz, ergänzt durch kuratierte Neuware.</p>
+          </div>
+          <div className="how-card how-card-mint">
+            <div className="how-emoji" aria-hidden="true">👶</div>
+            <h3 className="how-title">Du bringst, was zu klein wurde</h3>
+            <p>Deine Kinder wachsen schneller als ihre Hosen? Bring uns, was noch in guter Form ist — wir verkaufen es für dich und du bekommst deinen Anteil ausbezahlt.</p>
+          </div>
+          <div className="how-card how-card-yellow">
+            <div className="how-emoji" aria-hidden="true">💚</div>
+            <h3 className="how-title">Familien helfen Familien</h3>
+            <p>Lieblingsstücke bekommen ein zweites Zuhause, dein Budget freut sich, und gemeinsam tun wir der Umwelt etwas Gutes — Win-Win-Win für die ganze Familie.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function WantedNow() {
+  const items = ['Lego', 'Duplo', 'Playmobil', 'Tiptoi-Bücher', 'Grosse Zewidecken']
+  return (
+    <section className="info-section">
+      <div className="container">
+        <div className="wanted-banner">
+          <div className="wanted-stars" aria-hidden="true">✦ ✦ ✦</div>
+          <h2 className="section-title wanted-title">Diese Schätze suchen wir gerade besonders</h2>
+          <ul className="wanted-list ui">
+            {items.map(x => <li key={x}>{x}</li>)}
+          </ul>
+          <p className="wanted-foot">Du hast etwas davon zuhause? Bring es gerne vorbei — wir freuen uns!</p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function VisitUs() {
+  const hours = [
+    { day: 'Montag', time: 'Geschlossen', closed: true },
+    { day: 'Dienstag – Freitag', time: '08.30 – 11.30 · 13.30 – 18.00' },
+    { day: 'Samstag', time: '08.30 – 16.00' },
+  ]
+  return (
+    <section className="info-section info-section-soft">
+      <div className="container">
+        <div className="section-head">
+          <span className="section-eyebrow">✿ Komm vorbei</span>
+          <h2 className="section-title">Besuche uns in Gommiswald</h2>
+          <p className="section-sub">Wir freuen uns auf euch — Eltern, Grosseltern und natürlich die Kleinen.</p>
+        </div>
+        <div className="visit-grid">
+          <div className="visit-card">
+            <h3 className="visit-card-title">📅 Öffnungszeiten</h3>
+            <table className="hours-table ui">
+              <tbody>
+                {hours.map(h => (
+                  <tr key={h.day}>
+                    <td>{h.day}</td>
+                    <td className={h.closed ? 'hours-closed' : ''}>{h.time}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="visit-tip ui">💡 Tipp: Für eine entspannte Stöberzeit kommt am besten unter der Woche vorbei.</p>
+          </div>
+          <div className="visit-card">
+            <h3 className="visit-card-title">🎁 Sachen vorbeibringen</h3>
+            <p className="visit-intro">Damit alle Familien Freude daran haben, nehmen wir gerne an:</p>
+            <ul className="rules-list ui">
+              <li>Saisonale, saubere Kleidung & Schuhe — ohne Flecken oder Löcher</li>
+              <li>Spielzeug, das vollzählig und funktionstüchtig ist (Spiele und Puzzles bitte vollständig)</li>
+              <li>Bücher in gutem Zustand</li>
+            </ul>
+            <p className="visit-note ui">Bitte voranmelden ab 5 Artikeln. An Samstagen und in den Schulferien nehmen wir leider keine neuen Sachen entgegen.</p>
+          </div>
+        </div>
+      </div>
+    </section>
   )
 }
 
@@ -282,9 +379,11 @@ export function Footer() {
             </p>
           </div>
           <div>
-            <h4>Über uns</h4>
-            <p style={{ margin: 0 }}>
-              Konsignation für Familien in der Schweiz. Secondhand mit Liebe ausgewählt + sorgfältig kuratierte Neuware.
+            <h4>Öffnungszeiten</h4>
+            <p style={{ margin: 0, fontSize: 13, lineHeight: 1.7 }}>
+              Mo geschlossen<br />
+              Di – Fr 08.30–11.30 · 13.30–18.00<br />
+              Sa 08.30–16.00
             </p>
           </div>
           <div>
