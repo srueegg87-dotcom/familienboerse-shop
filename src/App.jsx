@@ -351,7 +351,7 @@ function Terms() {
                 <ul>
                   <li>Artikel bleiben gemäss Lieferbeleg <b>in der Regel 3 Monate</b> in Kommission.</li>
                   <li>Bitte mindestens <b>5 Tage vor Abrechnung melden</b>, damit allfällige Retouren bereitgestellt werden können.</li>
-                  <li>Sämtliche Ansprüche erlöschen <b>12 Monate</b> nach Lieferdatum.</li>
+                  <li>Sämtliche Ansprüche auf Guthaben erlöschen <b>12 Monate</b> nach Lieferdatum.</li>
                 </ul>
               </div>
 
