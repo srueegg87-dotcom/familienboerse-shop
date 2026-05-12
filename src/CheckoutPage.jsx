@@ -130,6 +130,17 @@ export default function CheckoutPage() {
         }
       }
 
+      // 6) Benachrichtigungs-Mail an info@familienboerse.ch (Best-Effort, fail-silent)
+      try {
+        await fetch('/api/notify-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ order: created, items: orderItemRows })
+        })
+      } catch (mailErr) {
+        console.warn('Mail-Versand fehlgeschlagen (Bestellung trotzdem ok):', mailErr)
+      }
+
       clear()
       navigate(`/bestellung/${created.id}`)
     } catch (e) {
