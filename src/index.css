@@ -996,6 +996,47 @@ img {
   box-shadow: var(--shadow-lg) !important;
 }
 
+/* ─── Preview-Modus oberhalb (4 Vorschau-Karten) ─── */
+.preview-head {
+  text-align: center;
+  max-width: 720px;
+  margin: 48px auto 28px;
+}
+
+.preview-cta {
+  display: flex;
+  justify-content: center;
+  margin: 32px 0 8px;
+}
+
+.btn-show-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 30px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.btn-show-all:hover {
+  background: var(--accent-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+@media (max-width: 640px) {
+  .preview-head { margin: 32px auto 22px; }
+  .btn-show-all { padding: 12px 24px; font-size: 14px; }
+}
+
 /* ─── Info-Sektionen unter dem Grid ─── */
 .info-section {
   padding: 56px 0;
