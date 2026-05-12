@@ -322,35 +322,67 @@ function Terms() {
                 <h4>🌿 Was wir annehmen</h4>
                 <ul>
                   <li>Saisonale, saubere Kleidung, Schuhe und Spielzeug — ohne Flecken oder Löcher.</li>
-                  <li>Spiele und Puzzles bitte nur vollständig.</li>
+                  <li>Spiele und Puzzles bitte nur vollständig und in unbeschädigtem Zustand.</li>
                   <li>Voranmeldung ab 5 Artikeln. Keine Annahme an Samstagen und in den Schulferien.</li>
+                  <li>Nach kurzer Kontrolle werden die Artikel in der Börse ausgestellt.</li>
                 </ul>
               </div>
+
+              <div className="terms-block">
+                <h4>📋 Verkauf &amp; Preise</h4>
+                <ul>
+                  <li>Der Verkaufspreis wird von Rüegg's Familienbörse festgelegt.</li>
+                  <li>Verkauf gegen Barzahlung, TWINT oder Kreditkarte.</li>
+                  <li>Nachträgliche Preisänderungen: <b>CHF 1.–</b> pro Artikel bis CHF 49.–, ab CHF 50.– sind es <b>CHF 5.–</b> pro Stück.</li>
+                </ul>
+              </div>
+
               <div className="terms-block">
                 <h4>💰 Provision &amp; Auszahlung</h4>
                 <ul>
                   <li>Wir verkaufen auf Kommission — du erhältst deinen vereinbarten Anteil pro verkauftem Artikel.</li>
-                  <li>Auszahlung ist im Lieferantenportal jederzeit einsehbar und wird wahlweise per TWINT, Bar oder Überweisung gemacht.</li>
+                  <li>Auszahlung ist erst <b>einen Monat nach Verkauf</b> und nur gegen Original-Lieferbeleg möglich.</li>
+                  <li>Auszahlung wahlweise per TWINT, Bar oder Banküberweisung.</li>
                 </ul>
               </div>
+
               <div className="terms-block">
                 <h4>⏳ Verkaufsfristen</h4>
                 <ul>
-                  <li>Spielzeug bleibt 6 Monate im Sortiment.</li>
-                  <li>Kleidung &amp; Schuhe bleiben 3 Monate im Sortiment.</li>
-                  <li>Danach kannst du die nicht verkauften Sachen entweder abholen oder spenden — du wählst.</li>
+                  <li>Artikel bleiben gemäss Lieferbeleg <b>in der Regel 3 Monate</b> in Kommission.</li>
+                  <li>Bitte mindestens <b>5 Tage vor Abrechnung melden</b>, damit allfällige Retouren bereitgestellt werden können.</li>
+                  <li>Sämtliche Ansprüche erlöschen <b>12 Monate</b> nach Lieferdatum.</li>
                 </ul>
               </div>
+
               <div className="terms-block">
                 <h4>↩️ Rückgabe oder Spende</h4>
                 <ul>
-                  <li><b>Rückgabe:</b> Abholung innerhalb von ca. 4 Wochen nach Fristablauf. Wir verrechnen CHF 1.– pro Artikel als Rückgabegebühr.</li>
-                  <li><b>Spende:</b> Sachen, die nicht verkauft werden, gehen an die Familienbörse oder eine soziale Einrichtung weiter.</li>
-                  <li>Defekte oder unverkäufliche Sachen dürfen gegen einen kleinen Unkostenbeitrag entsorgt werden, wenn du das so wünschst.</li>
+                  <li><b>Rückgabe:</b> Abholung nach Fristablauf — CHF 1.– pro Artikel als Rückgabegebühr für Aufwand &amp; Bereitstellung.</li>
+                  <li><b>Spende:</b> Nicht abgeholte Artikel werden an eine wohltätige Organisation (z.&nbsp;B. Endlesslife) gespendet.</li>
+                  <li>Defekte Sachen dürfen gegen einen Unkostenbeitrag entsorgt werden, wenn du das wünschst.</li>
                 </ul>
               </div>
+
+              <div className="terms-block">
+                <h4>📦 Sperrige Artikel</h4>
+                <ul>
+                  <li>Für grosse oder sperrige Artikel verlangen wir ein Depot von <b>CHF 20.–</b>.</li>
+                  <li>Bei Nichtabholung wird das Depot zur Entsorgung verwendet; sonst beim Auszahlen verrechnet.</li>
+                </ul>
+              </div>
+
+              <div className="terms-block terms-block-wide">
+                <h4>🛡️ Haftung</h4>
+                <ul>
+                  <li>Für alle in den Verkauf gegebenen Artikel lehnen wir jegliche Haftung ab — auch bei Brand, Hochwasser, Diebstahl oder Einbruchdiebstahl.</li>
+                  <li>Der Artikelbesitzer haftet selber für die gebrachten Artikel; für versteckte Mängel übernehmen wir keine Haftung.</li>
+                </ul>
+              </div>
+
               <div className="terms-foot">
-                Beim ersten Einliefern bekommst du diese Punkte als Einverständniserklärung zum Unterschreiben — entweder auf Papier im Laden oder direkt digital im <a href="https://vendor-portal-ie8v.vercel.app" target="_blank" rel="noopener noreferrer" className="terms-link">Lieferantenportal</a>.
+                Mit der Übergabe der Verkaufsartikel anerkennst du diese Bedingungen. Beim ersten Einliefern bekommst du sie als Einverständniserklärung zum Unterschreiben — auf Papier im Laden oder direkt digital im <a href="https://vendor-portal-ie8v.vercel.app" target="_blank" rel="noopener noreferrer" className="terms-link">Lieferantenportal</a>.<br />
+                <span className="terms-foot-sub">Stand: 01.01.2026 · Rüegg's Familienbörse, Gommiswald</span>
               </div>
             </div>
           )}

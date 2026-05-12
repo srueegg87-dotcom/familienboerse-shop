@@ -1454,6 +1454,10 @@ img {
   margin-bottom: 6px;
 }
 
+.terms-block-wide {
+  grid-column: 1 / -1;
+}
+
 .terms-foot {
   grid-column: 1 / -1;
   background: var(--pastel-mint-soft);
@@ -1464,6 +1468,14 @@ img {
   color: var(--text);
   line-height: 1.55;
   margin-top: 4px;
+}
+
+.terms-foot-sub {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-soft);
 }
 
 .terms-link {
