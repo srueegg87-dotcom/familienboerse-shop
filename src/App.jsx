@@ -124,7 +124,7 @@ export default function App() {
         <div className="hero-decoration hero-decoration-left" aria-hidden="true">✦</div>
         <div className="hero-decoration hero-decoration-right" aria-hidden="true">✦</div>
         <div className="container">
-          <div className="hero-tagline ui">♡ Mit Liebe kuratiert seit 2023</div>
+          <div className="hero-tagline ui">♡ Mit Liebe seit 2025</div>
           <h1>Familien-Schätze für <em>Familien</em></h1>
           <p className="sub">
             Secondhand & Neuware · Konsignation in Gommiswald
