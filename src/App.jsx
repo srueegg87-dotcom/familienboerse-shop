@@ -50,15 +50,22 @@ export default function App() {
 
   useEffect(() => {
     const load = async () => {
-      // Verfügbare Items laden
-      const { data: itemsData } = await supabase
-        .from('items')
-        .select('id, name, category, price, brand, size, description, added')
-        .eq('status', 'verfügbar')
-        .order('added', { ascending: false })
-        .limit(500)
-      
-      setItems(itemsData || [])
+      // Verfügbare Items chunked laden (Supabase REST liefert max 1000 pro Request).
+      let itemsData = []
+      let pageFrom = 0
+      while (true) {
+        const { data, error } = await supabase
+          .from('items')
+          .select('id, name, category, price, brand, size, description, added')
+          .eq('status', 'verfügbar')
+          .order('added', { ascending: false })
+          .range(pageFrom, pageFrom + 999)
+        if (error || !data) break
+        itemsData = itemsData.concat(data)
+        if (data.length < 1000) break
+        pageFrom += 1000
+      }
+      setItems(itemsData)
 
       // Fotos laden (eines pro Item, das erste)
       if (itemsData && itemsData.length > 0) {
