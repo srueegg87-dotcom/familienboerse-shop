@@ -246,6 +246,7 @@ export default function App() {
       <HowItWorks />
       <WantedNow />
       <VisitUs />
+      <Terms />
       <Footer />
       <NewsletterPopup />
     </>
@@ -295,6 +296,64 @@ function WantedNow() {
             {items.map(x => <li key={x}>{x}</li>)}
           </ul>
           <p className="wanted-foot">Du hast etwas davon zuhause? Bring es gerne vorbei — wir freuen uns!</p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Terms() {
+  const [open, setOpen] = useState(false)
+  return (
+    <section className="info-section">
+      <div className="container">
+        <div className="terms-card">
+          <button className="terms-toggle ui" onClick={() => setOpen(o => !o)} aria-expanded={open}>
+            <div>
+              <div className="terms-eyebrow">✦ Für Lieferanten</div>
+              <div className="terms-title">Unsere Geschäftsbedingungen</div>
+              <div className="terms-hint">Das Wichtigste in Kürze — was bei uns gilt, wenn du Sachen abgibst.</div>
+            </div>
+            <span className="terms-chevron" aria-hidden="true">{open ? '−' : '+'}</span>
+          </button>
+          {open && (
+            <div className="terms-body">
+              <div className="terms-block">
+                <h4>🌿 Was wir annehmen</h4>
+                <ul>
+                  <li>Saisonale, saubere Kleidung, Schuhe und Spielzeug — ohne Flecken oder Löcher.</li>
+                  <li>Spiele und Puzzles bitte nur vollständig.</li>
+                  <li>Voranmeldung ab 5 Artikeln. Keine Annahme an Samstagen und in den Schulferien.</li>
+                </ul>
+              </div>
+              <div className="terms-block">
+                <h4>💰 Provision &amp; Auszahlung</h4>
+                <ul>
+                  <li>Wir verkaufen auf Kommission — du erhältst deinen vereinbarten Anteil pro verkauftem Artikel.</li>
+                  <li>Auszahlung ist im Lieferantenportal jederzeit einsehbar und wird wahlweise per TWINT, Bar oder Überweisung gemacht.</li>
+                </ul>
+              </div>
+              <div className="terms-block">
+                <h4>⏳ Verkaufsfristen</h4>
+                <ul>
+                  <li>Spielzeug bleibt 6 Monate im Sortiment.</li>
+                  <li>Kleidung &amp; Schuhe bleiben 3 Monate im Sortiment.</li>
+                  <li>Danach kannst du die nicht verkauften Sachen entweder abholen oder spenden — du wählst.</li>
+                </ul>
+              </div>
+              <div className="terms-block">
+                <h4>↩️ Rückgabe oder Spende</h4>
+                <ul>
+                  <li><b>Rückgabe:</b> Abholung innerhalb von ca. 4 Wochen nach Fristablauf. Wir verrechnen CHF 1.– pro Artikel als Rückgabegebühr.</li>
+                  <li><b>Spende:</b> Sachen, die nicht verkauft werden, gehen an die Familienbörse oder eine soziale Einrichtung weiter.</li>
+                  <li>Defekte oder unverkäufliche Sachen dürfen gegen einen kleinen Unkostenbeitrag entsorgt werden, wenn du das so wünschst.</li>
+                </ul>
+              </div>
+              <div className="terms-foot">
+                Beim ersten Einliefern bekommst du diese Punkte als Einverständniserklärung zum Unterschreiben — entweder auf Papier im Laden oder direkt digital im <a href="https://vendor-portal-ie8v.vercel.app" target="_blank" rel="noopener noreferrer" className="terms-link">Lieferantenportal</a>.
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>

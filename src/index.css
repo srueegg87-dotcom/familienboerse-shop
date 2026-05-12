@@ -1356,3 +1356,123 @@ img {
   .info-section { padding: 40px 0; }
   .section-head { margin-bottom: 28px; }
 }
+
+/* ─── Geschäftsbedingungen-Akkordeon ─── */
+.terms-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.terms-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 28px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.terms-toggle:hover {
+  background: var(--bg-soft);
+}
+
+.terms-eyebrow {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.terms-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.terms-hint {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-soft);
+}
+
+.terms-chevron {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  color: var(--accent);
+  line-height: 1;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.terms-body {
+  padding: 0 28px 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 28px;
+  border-top: 1px dashed var(--border);
+  padding-top: 24px;
+  font-family: 'Inter', sans-serif;
+}
+
+.terms-block h4 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 8px;
+}
+
+.terms-block ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.terms-block li {
+  margin-bottom: 6px;
+}
+
+.terms-foot {
+  grid-column: 1 / -1;
+  background: var(--pastel-mint-soft);
+  border-radius: var(--radius-lg);
+  padding: 14px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.55;
+  margin-top: 4px;
+}
+
+.terms-link {
+  color: var(--accent-dark);
+  text-decoration: underline;
+}
+
+@media (max-width: 720px) {
+  .terms-toggle { padding: 20px 22px; }
+  .terms-body { grid-template-columns: 1fr; padding: 22px; gap: 18px; }
+  .terms-title { font-size: 22px; }
+}
