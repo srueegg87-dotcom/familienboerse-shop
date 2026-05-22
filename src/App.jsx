@@ -5,30 +5,51 @@ import NewsletterModal from './NewsletterModal'
 import NewsletterPopup from './NewsletterPopup'
 import { useCart } from './CartContext'
 
-// Kategorien-Reihenfolge für die Filter-Pills (oberste sind die wichtigsten)
+// Saubere Hauptkategorien für den Filter. Die einzelnen Artikel haben sehr
+// granulare Roh-Kategorien (T-Shirt, Sommer-Hose, Sneaker …) – mainCategory()
+// fasst sie zu diesen Gruppen zusammen.
 const FILTER_CATS = [
   'Alle',
-  'Kleidung Baby (0-12 Monate)',
-  'Kleidung Kleinkind (1-4 J)',
-  'Kleidung Kind (5-12 J)',
-  'Kleidung Teenager (13+ J)',
-  'Kleidung Erwachsen Damen',
-  'Kleidung Erwachsen Herren',
-  'Schuhe Baby',
-  'Schuhe Kind',
-  'Schuhe Erwachsen',
-  'Spielzeug',
+  'Oberteile',
+  'Pullover & Hoodies',
+  'Hosen',
+  'Kleider & Röcke',
+  'Jacken & Mäntel',
+  'Schlafen',
+  'Baby-Body & Strampler',
+  'Schuhe',
+  'Mützen & Accessoires',
+  'Taschen & Rucksäcke',
+  'Spielzeug & Spiele',
   'Bücher',
-  'Sport & Freizeit',
-  'Möbel',
-  'Kinderwagen & Buggys',
   'Babyausstattung',
   'Autositze & Sicherheit',
-  'Schwangerschaft & Stillen',
-  'Accessoires',
-  'Taschen & Rucksäcke',
+  'Sport & Freizeit',
   'Sonstiges',
 ]
+
+// Ordnet eine granulare Roh-Kategorie einer Hauptkategorie zu (Reihenfolge zählt).
+export function mainCategory(raw) {
+  const c = (raw || '').toLowerCase().trim()
+  if (!c) return 'Sonstiges'
+  const has = (...ws) => ws.some(w => c.includes(w))
+  if (has('sneaker', 'sandal', 'stiefel', 'hausschuh', 'babyschuh', 'turntäppeli', 'turnschuh', 'finken', 'ballerina', 'schuh', 'boots', 'gummistiefel', 'pantoffel', 'halbschuh', 'lauflern', 'flip', 'espadrille', 'slipper', 'crocs')) return 'Schuhe'
+  if (has('jacke', 'mantel', 'weste', 'anorak', 'parka', 'fleece', 'blazer', 'daunen', 'windjacke', 'softshell', 'gilet', 'bolero', 'poncho', 'cape')) return 'Jacken & Mäntel'
+  if (has('kleid', 'jupe', 'rock', 'tutu')) return 'Kleider & Röcke'
+  if (has('pullover', 'hoodie', 'sweatshirt', 'sweater', 'strickjacke', 'cardigan', 'pulli', 'sweat')) return 'Pullover & Hoodies'
+  if (has('pyjama', 'schlafsack', 'schlafanzug', 'nachthemd', 'schlafoverall', 'bademantel')) return 'Schlafen'
+  if (has('body', 'strampler', 'spielanzug', 'wickelbody', 'overall')) return 'Baby-Body & Strampler'
+  if (has('hose', 'jeans', 'short', 'leggin', 'jegging', 'jogg', 'cargo', 'latzhose', 'trainerhose', 'pumphose', 'caprihose', 'treggings', 'bermuda')) return 'Hosen'
+  if (has('shirt', 'bluse', 'hemd', 'polo', 'tanktop', 'tunika', 'longsleeve', 'langarm', 'top')) return 'Oberteile'
+  if (has('mütze', 'kappe', 'schal', 'handschuh', 'stirnband', 'gürtel', 'cap', 'krawatte', 'sonnenbrille', 'haarband', 'fäustlinge', 'beanie', 'hut', 'halstuch', 'schirmmütze', 'stulpen', 'socken', 'strumpf')) return 'Mützen & Accessoires'
+  if (has('tasche', 'rucksack', 'beutel', 'etui', 'mäppli', 'täschli', 'sack')) return 'Taschen & Rucksäcke'
+  if (has('puzzle', 'lego', 'playmobil', 'brettspiel', 'spielzeug', 'puppe', 'figur', 'bauklotz', 'kuscheltier', 'plüsch', 'holzspielzeug', 'steckspiel', 'malset', 'bastel', 'knet', 'spiel', 'ball', 'rassel', 'greifling')) return 'Spielzeug & Spiele'
+  if (has('buch', 'bücher', 'comic', 'heft', 'bilderbuch')) return 'Bücher'
+  if (has('kinderwagen', 'buggy', 'hochstuhl', 'wickel', 'laufgitter', 'babytrage', 'trage', 'babyphone', 'flasche', 'lätzchen', 'schoppen', 'nuggi', 'beistellbett', 'reisebett', 'wippe', 'türhopser', 'badewanne', 'töpfchen', 'lauflernhilfe', 'gehfrei', 'mobile', 'stillkissen', 'bettwäsche', 'fixleintuch', 'leintuch', 'molton', 'babydecke', 'nuscheli', 'windel')) return 'Babyausstattung'
+  if (has('autositz', 'kindersitz', 'helm', 'sicherheit')) return 'Autositze & Sicherheit'
+  if (has('ski', 'schwimm', 'bade', 'bikini', 'velo', 'trottinett', 'scooter', 'schlittschuh', 'sport', 'wander', 'schlitten', 'snowboard')) return 'Sport & Freizeit'
+  return 'Sonstiges'
+}
 
 const PRICE_RANGES = [
   { label: 'Alle Preise', min: 0, max: Infinity },
@@ -102,7 +123,7 @@ export default function App() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
     let r = items.filter(i => {
-      if (cat !== 'Alle' && i.category !== cat) return false
+      if (cat !== 'Alle' && mainCategory(i.category) !== cat) return false
       const p = Number(i.price || 0)
       const range = PRICE_RANGES[priceIdx]
       if (p < range.min || p > range.max) return false
@@ -145,7 +166,7 @@ export default function App() {
                 Artikel verfügbar
               </div>
               <div className="stat">
-                <strong>{new Set(items.map(i => i.category)).size}</strong>
+                <strong>{new Set(items.map(i => mainCategory(i.category)).filter(Boolean)).size}</strong>
                 Kategorien
               </div>
             </div>
