@@ -1,0 +1,5 @@
+{
+  "crons": [
+    { "path": "/api/ricardo-push", "schedule": "0 6 * * 2,5" }
+  ]
+}
