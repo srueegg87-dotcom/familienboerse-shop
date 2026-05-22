@@ -27,8 +27,14 @@ export default function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false)
   const [err, setErr] = useState('')
 
-  // Wenn Warenkorb leer → zurück zur Startseite
-  useEffect(() => { if (items.length === 0) navigate('/') }, [items.length, navigate])
+  // SumUp Online-Zahlung
+  const [sumupCheckoutId, setSumupCheckoutId] = useState(null)
+  const [onlineOrder, setOnlineOrder] = useState(null)
+  const [payErr, setPayErr] = useState('')
+  const [payProcessing, setPayProcessing] = useState(false)
+
+  // Wenn Warenkorb leer → zurück zur Startseite (außer während laufender Online-Zahlung)
+  useEffect(() => { if (items.length === 0 && !sumupCheckoutId) navigate('/') }, [items.length, navigate, sumupCheckoutId])
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
@@ -69,6 +75,19 @@ export default function CheckoutPage() {
       if (!form.shipping_zip.trim() || !form.shipping_city.trim()) return 'Bitte PLZ und Ort für die Lieferadresse eintragen.'
     }
     return null
+  }
+
+  // Voucher nach erfolgreicher Zahlung abbuchen (für Online erst nach PAID)
+  const redeemVoucher = async () => {
+    if (!voucherInfo) return
+    if (voucherInfo.type === 'percent') {
+      await supabase.from('vouchers').update({ status: 'eingeloest', redeemed_at: new Date().toISOString() }).eq('id', voucherInfo.id)
+    } else {
+      const newRem = Math.max(0, Number(voucherInfo.remaining_amount || 0) - voucherDiscount)
+      const patch = { remaining: newRem }
+      if (newRem <= 0.005) { patch.status = 'eingeloest'; patch.redeemed_at = new Date().toISOString() }
+      await supabase.from('vouchers').update(patch).eq('id', voucherInfo.id)
+    }
   }
 
   const submit = async (e) => {
@@ -140,44 +159,141 @@ export default function CheckoutPage() {
       const itemIds = items.map(i => i.id)
       await supabase.from('items').update({ status: 'reserviert' }).in('id', itemIds)
 
-      // 5) Voucher: bei Rechnung/Bar direkt abbuchen; bei Online erst nach Zahlung
-      if (voucherInfo && form.payment_method !== 'online') {
-        if (voucherInfo.type === 'percent') {
-          await supabase.from('vouchers').update({ status: 'eingeloest', redeemed_at: new Date().toISOString() }).eq('id', voucherInfo.id)
-        } else {
-          const newRem = Math.max(0, Number(voucherInfo.remaining_amount || 0) - voucherDiscount)
-          const patch = { remaining: newRem }
-          if (newRem <= 0.005) { patch.status = 'eingeloest'; patch.redeemed_at = new Date().toISOString() }
-          await supabase.from('vouchers').update(patch).eq('id', voucherInfo.id)
+      // 5) ONLINE-ZAHLUNG: SumUp-Checkout erstellen und Bezahlfeld anzeigen.
+      //    (Bestellung bleibt 'pending', Voucher wird erst nach PAID abgebucht.)
+      if (form.payment_method === 'online') {
+        if (total <= 0) {
+          // Nichts zu zahlen (z.B. voller Gutschein) -> direkt als bezahlt behandeln
+          await supabase.from('online_orders').update({ payment_status: 'bezahlt' }).eq('id', created.id)
+          await redeemVoucher()
+          notifyOrder(created, orderItemRows)
+          clear(); navigate(`/bestellung/${created.id}`); return
         }
+        const r = await fetch('/api/sumup-checkout', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'create', amount: total, currency: 'CHF', checkout_reference: String(created.order_nr || created.id), description: `Bestellung ${created.order_nr || ''}`.trim() })
+        })
+        const co = await r.json()
+        if (!r.ok || !co.id) throw new Error(co.error || co.detail || 'Online-Zahlung konnte nicht gestartet werden.')
+        setOnlineOrder(created)
+        setSumupCheckoutId(co.id)
+        setSubmitting(false)
+        return // Bezahlfeld anzeigen statt navigieren
       }
 
-      // 6) Benachrichtigungs-Mail an info@familienboerse.ch (Best-Effort, fail-silent)
-      try {
-        await fetch('/api/notify-order', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ order: created, items: orderItemRows })
-        })
-      } catch (mailErr) {
-        console.warn('Mail-Versand fehlgeschlagen (Bestellung trotzdem ok):', mailErr)
-      }
+      // 6) Nicht-online: Voucher direkt abbuchen
+      await redeemVoucher()
+
+      // 7) Benachrichtigungs-Mail (Best-Effort)
+      notifyOrder(created, orderItemRows)
 
       clear()
       navigate(`/bestellung/${created.id}`)
     } catch (e) {
       setErr('Bestellung fehlgeschlagen: ' + (e.message || e))
-    } finally {
       setSubmitting(false)
     }
   }
 
-  if (items.length === 0) return null
+  const notifyOrder = (order, orderItemRows) => {
+    fetch('/api/notify-order', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ order, items: orderItemRows })
+    }).catch(mailErr => console.warn('Mail-Versand fehlgeschlagen:', mailErr))
+  }
+
+  // SumUp-Bezahlfeld einblenden, sobald ein Checkout existiert
+  useEffect(() => {
+    if (!sumupCheckoutId) return
+    let cancelled = false
+    const mount = () => {
+      if (cancelled || !window.SumUpCard) return
+      window.SumUpCard.mount({
+        id: 'sumup-card',
+        checkoutId: sumupCheckoutId,
+        locale: 'de-CH',
+        onResponse: (type, body) => {
+          if (type === 'success' || body?.status === 'PAID') {
+            finishOnlinePayment()
+          } else if (type === 'error' || type === 'fail' || body?.status === 'FAILED') {
+            setPayErr('Zahlung fehlgeschlagen oder abgebrochen. Bitte erneut versuchen.')
+          }
+        },
+      })
+    }
+    if (window.SumUpCard) { mount() }
+    else {
+      const s = document.createElement('script')
+      s.src = 'https://gateway.sumup.com/gateway/ecom/card/v2/sdk.js'
+      s.async = true
+      s.onload = mount
+      s.onerror = () => setPayErr('Bezahlfeld konnte nicht geladen werden. Bitte Seite neu laden.')
+      document.body.appendChild(s)
+    }
+    return () => { cancelled = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sumupCheckoutId])
+
+  const finishOnlinePayment = async () => {
+    if (!onlineOrder || payProcessing) return
+    setPayProcessing(true); setPayErr('')
+    try {
+      // Status serverseitig verifizieren (nie nur dem Browser vertrauen)
+      const r = await fetch('/api/sumup-checkout', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'status', checkout_id: sumupCheckoutId })
+      })
+      const st = await r.json()
+      if (st.status !== 'PAID') {
+        setPayErr('Zahlung noch nicht bestätigt. Falls Geld abgebucht wurde, melde dich bitte – wir prüfen es.')
+        setPayProcessing(false); return
+      }
+      await supabase.from('online_orders').update({ payment_status: 'bezahlt' }).eq('id', onlineOrder.id)
+      await redeemVoucher()
+      // Benachrichtigung erst nach erfolgreicher Zahlung
+      const orderItemRows = items.map(it => ({ order_id: onlineOrder.id, item_id: it.id, name: it.name, sku: it.sku || null, category: it.category || null, price: Number(it.price || 0), vendor_id: it.vendor_id || null, vendor_name: it.vendor_name || null }))
+      notifyOrder({ ...onlineOrder, payment_status: 'bezahlt' }, orderItemRows)
+      const oid = onlineOrder.id
+      clear()
+      navigate(`/bestellung/${oid}`)
+    } catch (e) {
+      setPayErr('Fehler bei der Bestätigung: ' + (e.message || e))
+      setPayProcessing(false)
+    }
+  }
+
+  const cancelOnlinePayment = async () => {
+    // Reservierung freigeben + Bestellung als abgebrochen markieren
+    try {
+      const itemIds = items.map(i => i.id)
+      if (itemIds.length) await supabase.from('items').update({ status: 'verfügbar' }).in('id', itemIds)
+      if (onlineOrder) await supabase.from('online_orders').update({ status: 'storniert', payment_status: 'abgebrochen' }).eq('id', onlineOrder.id)
+    } catch (e) { /* ignore */ }
+    setSumupCheckoutId(null); setOnlineOrder(null); setPayErr(''); setPayProcessing(false)
+  }
+
+  if (items.length === 0 && !sumupCheckoutId) return null
 
   return (
     <>
       <Topbar />
       <main className="container checkout-page">
+
+        {/* SumUp Bezahlfeld */}
+        {sumupCheckoutId && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', overflowY: 'auto', padding: '24px 16px' }}>
+            <div style={{ background: '#fff', borderRadius: 16, maxWidth: 460, width: '100%', padding: 24, marginTop: 24 }}>
+              <h2 style={{ marginTop: 0 }}>Sichere Zahlung</h2>
+              <p style={{ color: '#555', marginTop: 4 }}>Betrag: <strong>CHF {total.toFixed(2)}</strong> · Karte</p>
+              <div id="sumup-card" style={{ marginTop: 12 }}></div>
+              {payProcessing && <p style={{ color: '#2A5F4F', fontWeight: 600 }}>Zahlung wird bestätigt…</p>}
+              {payErr && <p className="form-err" style={{ color: '#c0392b' }}>{payErr}</p>}
+              <button type="button" onClick={cancelOnlinePayment} className="btn-secondary" style={{ marginTop: 12 }} disabled={payProcessing}>Abbrechen</button>
+              <p style={{ fontSize: 12, color: '#888', marginTop: 12 }}>Zahlung wird sicher von SumUp abgewickelt. Deine Kartendaten erreichen unseren Server nicht.</p>
+            </div>
+          </div>
+        )}
+
         <div className="checkout-head">
           <Link to="/" className="link-back">← Zurück zum Shop</Link>
           <h1>Bestellung abschliessen</h1>
@@ -276,11 +392,11 @@ export default function CheckoutPage() {
             <section className="checkout-section">
               <h2>Bezahlung</h2>
               <div className="radio-cards">
-                <label className="radio-card disabled">
-                  <input type="radio" name="payment" disabled />
+                <label className={`radio-card ${form.payment_method === 'online' ? 'active' : ''}`}>
+                  <input type="radio" name="payment" checked={form.payment_method === 'online'} onChange={() => set('payment_method', 'online')} />
                   <div>
-                    <div className="radio-card-title">💳 Karte / TWINT online <span className="badge-soon">bald verfügbar</span></div>
-                    <div className="radio-card-sub">Sofortzahlung via SumUp — wird gerade vorbereitet.</div>
+                    <div className="radio-card-title">💳 Karte online</div>
+                    <div className="radio-card-sub">Sofort sicher bezahlen via SumUp (Visa, Mastercard).</div>
                   </div>
                 </label>
                 <label className={`radio-card ${form.payment_method === 'cash_pickup' ? 'active' : ''} ${form.delivery_type === 'shipping' ? 'hidden' : ''}`}>
@@ -299,7 +415,7 @@ export default function CheckoutPage() {
                 </label>
               </div>
               {form.delivery_type === 'shipping' && form.payment_method === 'cash_pickup' && (
-                <p className="form-hint">⚠️ Bei Versand ist „Bar bei Abholung" nicht möglich — wähle „Rechnung".</p>
+                <p className="form-hint">⚠️ Bei Versand ist „Bar bei Abholung" nicht möglich — wähle „Karte online" oder „Rechnung".</p>
               )}
             </section>
 
@@ -311,7 +427,7 @@ export default function CheckoutPage() {
             {err && <p className="form-err form-err-big">{err}</p>}
 
             <button type="submit" className="btn-submit" disabled={submitting || (form.delivery_type === 'shipping' && form.payment_method === 'cash_pickup')}>
-              {submitting ? 'Bestellung wird gesendet…' : `Bestellung absenden — CHF ${total.toFixed(2)}`}
+              {submitting ? 'Bestellung wird verarbeitet…' : (form.payment_method === 'online' ? `Weiter zur Zahlung — CHF ${total.toFixed(2)}` : `Bestellung absenden — CHF ${total.toFixed(2)}`)}
             </button>
             <p className="checkout-legal">Mit dem Absenden bestätigst du unsere Geschäftsbedingungen. Du kannst innerhalb von 14 Tagen vom Kauf zurücktreten (Detailbestimmungen im Laden).</p>
           </form>
