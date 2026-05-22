@@ -106,8 +106,7 @@ export default function App() {
         for (const { data: photoData } of results) {
           for (const p of (photoData || [])) {
             if (!photoMap[p.item_id]) {
-              // Transformations-Thumbnail statt Vollbild → viel weniger Daten
-              photoMap[p.item_id] = `${SUPABASE_BASE_URL}/storage/v1/render/image/public/item-fotos/${p.storage_path}?width=400&quality=60`
+              photoMap[p.item_id] = `${SUPABASE_BASE_URL}/storage/v1/object/public/item-fotos/${p.storage_path}`
             }
           }
         }
