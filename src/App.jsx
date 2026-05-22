@@ -79,7 +79,7 @@ export default function App() {
       while (true) {
         const { data, error } = await supabase
           .from('items')
-          .select('id, name, category, price, brand, size, description, added')
+          .select('id, name, category, price, brand, size, added')
           .eq('status', 'verfügbar')
           .order('added', { ascending: false })
           .range(pageFrom, pageFrom + 999)
@@ -89,32 +89,30 @@ export default function App() {
         pageFrom += 1000
       }
       setItems(itemsData)
+      setLoading(false) // Seite sofort anzeigen – Bilder kommen danach nach
 
-      // Fotos laden (eines pro Item, das erste)
-      if (itemsData && itemsData.length > 0) {
+      // Fotos im Hintergrund laden (erstes Foto je Item), parallel + als Thumbnail
+      if (itemsData.length > 0) {
         const ids = itemsData.map(i => i.id)
-        const photoMap = {}
-        // In Chunks abfragen, weil .in() ist auf ~1000 begrenzt
-        for (let i = 0; i < ids.length; i += 200) {
-          const chunk = ids.slice(i, i + 200)
-          const { data: photoData } = await supabase
-            .from('item_photos')
+        const chunks = []
+        for (let i = 0; i < ids.length; i += 300) chunks.push(ids.slice(i, i + 300))
+        const results = await Promise.all(chunks.map(chunk =>
+          supabase.from('item_photos')
             .select('item_id, storage_path, reihenfolge')
             .in('item_id', chunk)
             .order('reihenfolge', { ascending: true })
-          
-          if (photoData) {
-            for (const p of photoData) {
-              if (!photoMap[p.item_id]) {
-                photoMap[p.item_id] = `${SUPABASE_BASE_URL}/storage/v1/object/public/item-fotos/${p.storage_path}`
-              }
+        ))
+        const photoMap = {}
+        for (const { data: photoData } of results) {
+          for (const p of (photoData || [])) {
+            if (!photoMap[p.item_id]) {
+              // Transformations-Thumbnail statt Vollbild → viel weniger Daten
+              photoMap[p.item_id] = `${SUPABASE_BASE_URL}/storage/v1/render/image/public/item-fotos/${p.storage_path}?width=400&quality=60`
             }
           }
         }
         setPhotos(photoMap)
       }
-
-      setLoading(false)
     }
     load()
   }, [])
