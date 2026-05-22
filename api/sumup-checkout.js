@@ -25,7 +25,12 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   if (!process.env.SUMUP_API_KEY) {
-    return res.status(500).json({ error: 'SUMUP_API_KEY fehlt im Shop-Projekt (Vercel-Env)' });
+    const found = Object.keys(process.env).filter(k => /sum.?up/i.test(k));
+    return res.status(500).json({
+      error: 'SUMUP_API_KEY fehlt im Shop-Projekt (Vercel-Env)',
+      gefundene_sumup_variablen: found,
+      hinweis: found.length ? 'Variable existiert, aber NICHT als SUMUP_API_KEY benannt – exakt so umbenennen.' : 'Keine SumUp-Variable sichtbar – evtl. nur für Preview/Development statt Production gesetzt, oder Redeploy fehlt.'
+    });
   }
 
   try {
