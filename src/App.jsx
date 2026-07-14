@@ -485,11 +485,35 @@ function VisitUs() {
   )
 }
 
+// ─── Kurzfristiger Öffnungszeiten-Hinweis ───
+// Zeigt sich nur am angegebenen Datum und verschwindet danach von selbst.
+// Zum Ändern/Entfernen einfach `date` bzw. `text` anpassen oder NOTICE = null setzen.
+const NOTICE = { date: '2026-07-14', text: 'Heute haben wir nur bis 17:00 Uhr geöffnet.' }
+
+function todayISO() {
+  const d = new Date()
+  const off = d.getTimezoneOffset()
+  return new Date(d.getTime() - off * 60000).toISOString().slice(0, 10)
+}
+
+function OpeningNotice() {
+  if (!NOTICE || NOTICE.date !== todayISO()) return null
+  return (
+    <div className="opening-notice" role="status">
+      <div className="container opening-notice-inner">
+        <span aria-hidden="true">⏰</span>
+        <span className="opening-notice-text">{NOTICE.text}</span>
+      </div>
+    </div>
+  )
+}
+
 export function Topbar() {
   const [showNewsletter, setShowNewsletter] = useState(false)
   const { count, setOpen } = useCart()
   return (
     <>
+      <OpeningNotice />
       <a href="https://partyladen.ch" target="_blank" rel="noopener noreferrer" className="partyladen-strip">
         <div className="container partyladen-inner">
           <span className="partyladen-emoji" aria-hidden="true">🎉</span>
