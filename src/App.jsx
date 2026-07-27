@@ -508,11 +508,39 @@ function OpeningNotice() {
   )
 }
 
+// ─── Prominenter Schliessungs-Banner ───
+// Zeigt sich ganztags vom `from`- bis und mit `until`-Datum und verschwindet
+// danach von selbst. Zum Entfernen einfach CLOSURE = null setzen.
+const CLOSURE = {
+  from: '2026-07-27',
+  until: '2026-07-28',
+  title: 'Am Dienstag geschlossen',
+  text: 'Unser Laden in Gommiswald bleibt am Dienstag, 28. Juli, den ganzen Tag geschlossen. Der Online-Shop hat wie immer rund um die Uhr für euch offen. 💛',
+}
+
+function ClosureBanner() {
+  if (!CLOSURE) return null
+  const today = todayISO()
+  if (today < CLOSURE.from || today > CLOSURE.until) return null
+  return (
+    <div className="closure-banner" role="alert">
+      <div className="container closure-banner-inner">
+        <span className="closure-banner-icon" aria-hidden="true">🔒</span>
+        <span className="closure-banner-copy">
+          <strong className="closure-banner-title">{CLOSURE.title}</strong>
+          <span className="closure-banner-text">{CLOSURE.text}</span>
+        </span>
+      </div>
+    </div>
+  )
+}
+
 export function Topbar() {
   const [showNewsletter, setShowNewsletter] = useState(false)
   const { count, setOpen } = useCart()
   return (
     <>
+      <ClosureBanner />
       <OpeningNotice />
       <a href="https://partyladen.ch" target="_blank" rel="noopener noreferrer" className="partyladen-strip">
         <div className="container partyladen-inner">
