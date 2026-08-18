@@ -240,11 +240,39 @@ export default function CheckoutPage() {
     }
   }
 
-  const notifyOrder = (order, orderItemRows) => {
-    fetch('/api/notify-order', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ order, items: orderItemRows })
-    }).catch(mailErr => console.warn('Mail-Versand fehlgeschlagen:', mailErr))
+  /**
+   * Benachrichtigung an den Laden auslösen.
+   *
+   * Der Kunde bekommt davon nichts mit — seine Bestellung ist gültig, auch wenn
+   * die Mail nicht rausgeht. Ein Fehlschlag darf aber nicht spurlos verschwinden:
+   * er wird in online_orders.internal_note vermerkt und erscheint damit im Admin
+   * unter „Online" als Warnung an der Bestellung.
+   */
+  const notifyOrder = async (order, orderItemRows) => {
+    let problem = null
+    try {
+      const r = await fetch('/api/notify-order', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ order, items: orderItemRows })
+      })
+      if (!r.ok) {
+        const j = await r.json().catch(() => ({}))
+        problem = j.error || `HTTP ${r.status}`
+      }
+    } catch (mailErr) {
+      problem = mailErr?.message || String(mailErr)
+    }
+    if (!problem) return
+
+    console.error('Mail-Versand fehlgeschlagen:', problem)
+    try {
+      const stempel = new Date().toLocaleString('de-CH')
+      await supabase.from('online_orders').update({
+        internal_note: `⚠ Benachrichtigungs-Mail nicht verschickt (${stempel}): ${problem}`
+      }).eq('id', order.id)
+    } catch (e) {
+      console.error('Konnte den Fehlschlag nicht an der Bestellung vermerken:', e)
+    }
   }
 
   // SumUp-Bezahlfeld einblenden, sobald ein Checkout existiert

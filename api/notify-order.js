@@ -1,6 +1,17 @@
 // Benachrichtigungs-Mail an info@familienboerse.ch bei jeder neuen Online-Bestellung.
 // Versendet via Resend (resend.com) — benötigt ENV RESEND_API_KEY.
-// Falls der Key fehlt, wird kein Fehler geworfen — die Bestellung läuft trotzdem.
+//
+// WICHTIG: Der Endpunkt hat bis 8/2026 jeden Fehler mit HTTP 200 quittiert —
+// fehlender Key, abgelehnte Zustellung, Ausnahme. Dadurch konnte der Versand
+// monatelang scheitern, ohne dass es irgendwo auffiel. Am 18.08.2026 bestätigt:
+// im Resend-Konto ist keine Domain verifiziert, der Standardabsender
+// onboarding@resend.dev stellt nur an die eigene Konto-Adresse zu, an
+// info@familienboerse.ch antwortet Resend mit 403.
+//
+// Deshalb jetzt: ehrliche Statuscodes und die Original-Meldung von Resend im
+// Rumpf. Die Bestellung selbst bleibt davon unberührt — der Aufrufer im
+// Checkout vermerkt einen Fehlschlag in online_orders.internal_note, damit er
+// im Admin unter „Online" sichtbar wird.
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -14,8 +25,8 @@ export default async function handler(req, res) {
 
   const apiKey = process.env.RESEND_API_KEY
   if (!apiKey) {
-    console.warn('RESEND_API_KEY ist nicht gesetzt — Mail wird übersprungen.')
-    return res.status(200).json({ skipped: true, reason: 'RESEND_API_KEY not configured' })
+    console.error('[notify-order] RESEND_API_KEY ist nicht gesetzt — keine Mail verschickt.')
+    return res.status(500).json({ error: 'RESEND_API_KEY ist nicht konfiguriert' })
   }
 
   const FROM = process.env.RESEND_FROM || 'Rüegg\'s Familienbörse <onboarding@resend.dev>'
@@ -96,13 +107,19 @@ export default async function handler(req, res) {
     })
     const data = await r.json()
     if (!r.ok) {
-      console.error('Resend error:', data)
-      return res.status(200).json({ error: data?.message || 'Mail failed', detail: data })
+      console.error('[notify-order] Resend lehnt ab:', r.status, JSON.stringify(data).slice(0, 300))
+      return res.status(502).json({
+        error: data?.message || `Resend antwortet mit HTTP ${r.status}`,
+        from: FROM,
+        to: TO,
+        detail: data,
+      })
     }
+    console.log(`[notify-order] Mail an ${TO} verschickt, Resend-ID ${data.id}`)
     return res.status(200).json({ ok: true, id: data.id })
   } catch (err) {
-    console.error('Mail send exception:', err)
-    return res.status(200).json({ error: err.message })
+    console.error('[notify-order] Versand fehlgeschlagen:', err)
+    return res.status(502).json({ error: err.message })
   }
 }
 
