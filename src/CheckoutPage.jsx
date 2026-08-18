@@ -7,7 +7,7 @@ import { Topbar, Footer } from './App.jsx'
 const SHIPPING_COST = 7.00 // CHF, Schweizer Post B-Post Pauschal
 
 export default function CheckoutPage() {
-  const { items, subtotal, clear } = useCart()
+  const { items, subtotal, clear, remove } = useCart()
   const navigate = useNavigate()
 
   const [form, setForm] = useState({
@@ -98,6 +98,27 @@ export default function CheckoutPage() {
     setSubmitting(true)
 
     try {
+      // 0) Verfügbarkeit gegen die Datenbank prüfen.
+      //    Der Warenkorb liegt im localStorage und kann Tage alt sein; bis 8/2026
+      //    wurde ohne Prüfung auf 'reserviert' gesetzt — ein zwischenzeitlich im
+      //    Laden verkaufter Artikel wurde damit wieder in den Verkauf geholt.
+      const cartIds = items.map(i => i.id)
+      const { data: fresh, error: freshErr } = await supabase
+        .from('items').select('id, name, status').in('id', cartIds)
+      if (freshErr) throw new Error('Verfügbarkeit konnte nicht geprüft werden: ' + freshErr.message)
+      const freshById = Object.fromEntries((fresh || []).map(i => [i.id, i]))
+      const weg = items.filter(i => freshById[i.id]?.status !== 'verfügbar')
+      if (weg.length) {
+        weg.forEach(i => remove(i.id))
+        setErr(
+          weg.length === items.length
+            ? `Leider ${weg.length === 1 ? 'ist der Artikel' : 'sind alle Artikel'} inzwischen vergeben: ${weg.map(i => i.name).join(', ')}. Der Warenkorb wurde geleert.`
+            : `Leider ${weg.length === 1 ? 'ist folgender Artikel' : 'sind folgende Artikel'} inzwischen vergeben und wurde${weg.length === 1 ? '' : 'n'} aus dem Warenkorb entfernt: ${weg.map(i => i.name).join(', ')}. Bitte die Bestellung erneut abschicken.`
+        )
+        setSubmitting(false)
+        return
+      }
+
       // 1) Beleg-Nr holen
       const { data: nr } = await supabase.rpc('get_next_online_order_nr')
 
@@ -155,9 +176,33 @@ export default function CheckoutPage() {
       }))
       await supabase.from('online_order_items').insert(orderItemRows)
 
-      // 4) Items reservieren (status = 'reserviert')
+      // 4) Items reservieren — nur solange sie noch 'verfügbar' sind. Die
+      //    Bedingung macht daraus einen wettlaufsicheren Claim: zwei parallele
+      //    Bestellungen können denselben Artikel nicht beide reservieren, und
+      //    ein bereits verkaufter Artikel wird nicht zurückgeholt.
       const itemIds = items.map(i => i.id)
-      await supabase.from('items').update({ status: 'reserviert' }).in('id', itemIds)
+      const { data: reserved, error: resErr } = await supabase
+        .from('items').update({ status: 'reserviert' })
+        .in('id', itemIds).eq('status', 'verfügbar')
+        .select('id')
+      if (resErr) throw new Error('Reservierung fehlgeschlagen: ' + resErr.message)
+      const gotIds = (reserved || []).map(r => r.id)
+      if (gotIds.length !== itemIds.length) {
+        // Jemand war schneller: eigene Teil-Reservierung freigeben, Bestellung verwerfen.
+        if (gotIds.length) {
+          await supabase.from('items').update({ status: 'verfügbar' })
+            .in('id', gotIds).eq('status', 'reserviert')
+        }
+        await supabase.from('online_orders').update({
+          status: 'storniert', payment_status: 'abgebrochen',
+          notiz: 'Automatisch verworfen: Artikel zwischenzeitlich vergeben',
+        }).eq('id', created.id)
+        const verloren = items.filter(i => !gotIds.includes(i.id))
+        verloren.forEach(i => remove(i.id))
+        setErr(`Leider war jemand schneller: ${verloren.map(i => i.name).join(', ')} ${verloren.length === 1 ? 'ist' : 'sind'} bereits vergeben und wurde${verloren.length === 1 ? '' : 'n'} aus dem Warenkorb entfernt. Es wurde nichts bestellt und nichts belastet.`)
+        setSubmitting(false)
+        return
+      }
 
       // 5) ONLINE-ZAHLUNG: SumUp-Checkout erstellen und Bezahlfeld anzeigen.
       //    (Bestellung bleibt 'pending', Voucher wird erst nach PAID abgebucht.)
@@ -265,8 +310,13 @@ export default function CheckoutPage() {
   const cancelOnlinePayment = async () => {
     // Reservierung freigeben + Bestellung als abgebrochen markieren
     try {
+      // Nur die eigene Reservierung freigeben: ohne die status-Bedingung würde ein
+      // Abbruch auch einen inzwischen im Laden verkauften Artikel zurückholen.
       const itemIds = items.map(i => i.id)
-      if (itemIds.length) await supabase.from('items').update({ status: 'verfügbar' }).in('id', itemIds)
+      if (itemIds.length) {
+        await supabase.from('items').update({ status: 'verfügbar' })
+          .in('id', itemIds).eq('status', 'reserviert')
+      }
       if (onlineOrder) await supabase.from('online_orders').update({ status: 'storniert', payment_status: 'abgebrochen' }).eq('id', onlineOrder.id)
     } catch (e) { /* ignore */ }
     setSumupCheckoutId(null); setOnlineOrder(null); setPayErr(''); setPayProcessing(false)
