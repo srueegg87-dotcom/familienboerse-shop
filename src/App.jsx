@@ -509,27 +509,42 @@ function OpeningNotice() {
 }
 
 // ─── Prominenter Schliessungs-Banner ───
-// Zeigt sich ganztags vom `from`- bis und mit `until`-Datum und verschwindet
-// danach von selbst. Zum Entfernen einfach CLOSURE = null setzen.
-const CLOSURE = {
-  from: '2026-07-27',
-  until: '2026-07-28',
-  title: 'Am Dienstag geschlossen',
-  text: 'Unser Laden in Gommiswald bleibt am Dienstag, 28. Juli, den ganzen Tag geschlossen. Der Online-Shop hat wie immer rund um die Uhr für euch offen. 💛',
-}
+// Jeder Eintrag zeigt sich ganztags vom `from`- bis und mit `until`-Datum und
+// verschwindet danach von selbst — `until` ist deshalb immer der Schliessungstag
+// selbst. Sind mehrere Termine gleichzeitig aktuell, stehen sie untereinander
+// im selben Banner. Zum Abschalten die Liste leeren.
+const CLOSURES = [
+  {
+    from: '2026-09-25',
+    until: '2026-09-30',
+    title: 'Mittwoch, 30. September: ab 17 Uhr geschlossen',
+    text: 'An diesem Mittwoch schliessen wir den Laden in Gommiswald bereits um 17 Uhr.',
+  },
+  {
+    from: '2026-09-25',
+    until: '2026-10-08',
+    title: 'Donnerstag, 8. Oktober: ganztags geschlossen',
+    text: 'An diesem Donnerstag bleibt der Laden in Gommiswald den ganzen Tag zu.',
+  },
+]
 
 function ClosureBanner() {
-  if (!CLOSURE) return null
   const today = todayISO()
-  if (today < CLOSURE.from || today > CLOSURE.until) return null
+  const aktuell = CLOSURES.filter(c => today >= c.from && today <= c.until)
+  if (!aktuell.length) return null
   return (
     <div className="closure-banner" role="alert">
       <div className="container closure-banner-inner">
         <span className="closure-banner-icon" aria-hidden="true">🔒</span>
-        <span className="closure-banner-copy">
-          <strong className="closure-banner-title">{CLOSURE.title}</strong>
-          <span className="closure-banner-text">{CLOSURE.text}</span>
-        </span>
+        <div className="closure-banner-list">
+          {aktuell.map(c => (
+            <span className="closure-banner-copy" key={c.title}>
+              <strong className="closure-banner-title">{c.title}</strong>
+              <span className="closure-banner-text">{c.text}</span>
+            </span>
+          ))}
+          <span className="closure-banner-note">Der Online-Shop hat wie immer rund um die Uhr für euch offen. 💛</span>
+        </div>
       </div>
     </div>
   )

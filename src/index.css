@@ -147,10 +147,25 @@ img {
   line-height: 1;
   flex-shrink: 0;
 }
+.closure-banner-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 .closure-banner-copy {
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+/* Trennlinie nur zwischen zwei Terminen, nicht vor dem ersten. */
+.closure-banner-copy + .closure-banner-copy {
+  border-top: 1px solid rgba(255, 255, 255, 0.28);
+  padding-top: 10px;
+}
+.closure-banner-note {
+  font-weight: 500;
+  font-size: 0.9rem;
+  opacity: 0.85;
 }
 .closure-banner-title {
   font-weight: 800;
@@ -173,6 +188,9 @@ img {
   }
   .closure-banner-text {
     font-size: 0.88rem;
+  }
+  .closure-banner-note {
+    font-size: 0.82rem;
   }
 }
 
