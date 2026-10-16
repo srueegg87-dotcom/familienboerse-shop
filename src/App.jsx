@@ -486,9 +486,16 @@ function VisitUs() {
 }
 
 // ─── Kurzfristiger Öffnungszeiten-Hinweis ───
-// Zeigt sich nur am angegebenen Datum und verschwindet danach von selbst.
-// Zum Ändern/Entfernen einfach `date` bzw. `text` anpassen oder NOTICE = null setzen.
-const NOTICE = { date: '2026-07-14', text: 'Heute haben wir nur bis 17:00 Uhr geöffnet.' }
+// `tag` ist der betroffene Tag, `ab` der erste Tag, an dem der Hinweis
+// erscheint — so lässt sich eine verkürzte Öffnung schon vorher ankündigen.
+// Am Tag selbst steht „Heute", vorher der Wochentag. Nach `tag` verschwindet
+// der Hinweis von selbst. Zum Entfernen NOTICE = null setzen.
+const NOTICE = {
+  tag: '2026-10-17',
+  ab: '2026-10-16',
+  label: 'Morgen, Samstag 17. Oktober,',
+  zeit: 'von 09:00 bis 14:00 Uhr',
+}
 
 function todayISO() {
   const d = new Date()
@@ -497,12 +504,17 @@ function todayISO() {
 }
 
 function OpeningNotice() {
-  if (!NOTICE || NOTICE.date !== todayISO()) return null
+  if (!NOTICE) return null
+  const today = todayISO()
+  if (today < (NOTICE.ab || NOTICE.tag) || today > NOTICE.tag) return null
+  const text = today === NOTICE.tag
+    ? `Heute haben wir nur ${NOTICE.zeit} geöffnet.`
+    : `${NOTICE.label} haben wir nur ${NOTICE.zeit} geöffnet.`
   return (
     <div className="opening-notice" role="status">
       <div className="container opening-notice-inner">
         <span aria-hidden="true">⏰</span>
-        <span className="opening-notice-text">{NOTICE.text}</span>
+        <span className="opening-notice-text">{text}</span>
       </div>
     </div>
   )
