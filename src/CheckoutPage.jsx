@@ -104,7 +104,7 @@ export default function CheckoutPage() {
       //    Laden verkaufter Artikel wurde damit wieder in den Verkauf geholt.
       const cartIds = items.map(i => i.id)
       const { data: fresh, error: freshErr } = await supabase
-        .from('items').select('id, name, status').in('id', cartIds)
+        .from('items').select('id, name, status, sku, vendor_id, vendor_name').in('id', cartIds)
       if (freshErr) throw new Error('Verfügbarkeit konnte nicht geprüft werden: ' + freshErr.message)
       const freshById = Object.fromEntries((fresh || []).map(i => [i.id, i]))
       const weg = items.filter(i => freshById[i.id]?.status !== 'verfügbar')
@@ -164,15 +164,16 @@ export default function CheckoutPage() {
       if (orderErr) throw orderErr
 
       // 3) order_items anlegen
+      // Artikel-Nr./Lieferant aus der DB statt aus dem Warenkorb (dort fehlten sie teils).
       const orderItemRows = items.map(it => ({
         order_id: created.id,
         item_id: it.id,
         name: it.name,
-        sku: it.sku || null,
+        sku: freshById[it.id]?.sku || it.sku || null,
         category: it.category || null,
         price: Number(it.price || 0),
-        vendor_id: it.vendor_id || null,
-        vendor_name: it.vendor_name || null,
+        vendor_id: freshById[it.id]?.vendor_id || it.vendor_id || null,
+        vendor_name: freshById[it.id]?.vendor_name || it.vendor_name || null,
       }))
       await supabase.from('online_order_items').insert(orderItemRows)
 
@@ -324,8 +325,8 @@ export default function CheckoutPage() {
       await supabase.from('online_orders').update({ payment_status: 'bezahlt' }).eq('id', onlineOrder.id)
       await redeemVoucher()
       // Benachrichtigung erst nach erfolgreicher Zahlung
-      const orderItemRows = items.map(it => ({ order_id: onlineOrder.id, item_id: it.id, name: it.name, sku: it.sku || null, category: it.category || null, price: Number(it.price || 0), vendor_id: it.vendor_id || null, vendor_name: it.vendor_name || null }))
-      notifyOrder({ ...onlineOrder, payment_status: 'bezahlt' }, orderItemRows)
+      const { data: orderItemRows } = await supabase.from('online_order_items').select('*').eq('order_id', onlineOrder.id)
+      notifyOrder({ ...onlineOrder, payment_status: 'bezahlt' }, orderItemRows || [])
       const oid = onlineOrder.id
       clear()
       navigate(`/bestellung/${oid}`)

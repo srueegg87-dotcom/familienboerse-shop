@@ -79,7 +79,7 @@ export default function App() {
       while (true) {
         const { data, error } = await supabase
           .from('items')
-          .select('id, name, category, price, brand, size, added')
+          .select('id, name, category, price, brand, size, added, sku, vendor_id, vendor_name')
           .eq('status', 'verfügbar')
           .order('added', { ascending: false })
           .range(pageFrom, pageFrom + 999)
