@@ -668,6 +668,20 @@ export function Footer() {
               Artikel einliefern + Auszahlungen einsehen.
             </p>
           </div>
+          <div>
+            <h4>Love Your Neighbour</h4>
+            <p style={{ margin: 0 }}>
+              <a
+                href="https://loveyourneighbour.ch"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: 'var(--accent)', textDecoration: 'underline' }}
+              >
+                loveyourneighbour.ch →
+              </a><br />
+              Wir produzieren für das soziale Modelabel.
+            </p>
+          </div>
         </div>
         <div className="footer-bottom ui">
           © 2026 Rüegg's Familienbörse · <a href="https://familienboerse.ch">familienboerse.ch</a>
