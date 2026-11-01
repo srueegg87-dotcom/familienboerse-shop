@@ -2253,3 +2253,20 @@ img {
   font-weight: 500;
 }
 .checkbox-row input { accent-color: var(--accent); }
+
+/* Love Your Neighbour Band */
+.lyn-band { display: block; background: #14120F; color: #F7F5F0; text-decoration: none; }
+.lyn-band:hover { background: #2A2621; }
+.lyn-inner { display: flex; align-items: center; gap: 28px; padding: 28px 24px; }
+.lyn-logo { height: 64px; width: auto; flex-shrink: 0; }
+.lyn-text { display: flex; flex-direction: column; gap: 4px; flex: 1 1 auto; }
+.lyn-lead { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 26px; font-weight: 700; line-height: 1.15; }
+.lyn-sub { font-family: 'Inter', sans-serif; font-size: 14px; color: #BFB8AA; }
+.lyn-cta { flex-shrink: 0; border: 1px solid #F7F5F0; color: #F7F5F0; padding: 10px 18px; font-size: 14px; font-weight: 700; white-space: nowrap; }
+.lyn-band:hover .lyn-cta { background: #F7F5F0; color: #14120F; }
+@media (max-width: 720px) {
+  .lyn-inner { flex-direction: column; text-align: center; gap: 14px; padding: 24px 16px; }
+  .lyn-logo { height: 52px; }
+  .lyn-lead { font-size: 22px; }
+  .lyn-cta { width: 100%; text-align: center; box-sizing: border-box; }
+}

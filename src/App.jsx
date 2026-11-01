@@ -171,6 +171,17 @@ export default function App() {
         </div>
       </section>
 
+      <a href="https://loveyourneighbour.ch" target="_blank" rel="noopener noreferrer" className="lyn-band">
+        <div className="container lyn-inner">
+          <img src="/lyn-logo.svg" alt="Love Your Neighbour" className="lyn-logo" />
+          <div className="lyn-text">
+            <span className="lyn-lead">Die Kraft hinter Love Your Neighbour</span>
+            <span className="lyn-sub">Wir produzieren die Kleider des sozialen Modelabels hier in Gommiswald.</span>
+          </div>
+          <span className="lyn-cta ui">loveyourneighbour.ch →</span>
+        </div>
+      </a>
+
       <main className="container">
         {/* Filter-Leiste — immer sichtbar */}
         <div className="filterbar ui">
