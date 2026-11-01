@@ -569,15 +569,15 @@ export function Topbar() {
     <>
       <ClosureBanner />
       <OpeningNotice />
-      <a href="https://partyladen.ch" target="_blank" rel="noopener noreferrer" className="partyladen-strip">
+      <a href="https://trikko.ch" target="_blank" rel="noopener noreferrer" className="partyladen-strip">
         <div className="container partyladen-inner">
-          <span className="partyladen-emoji" aria-hidden="true">🎉</span>
+          <span className="partyladen-emoji" aria-hidden="true">👕</span>
           <span className="partyladen-text">
-            <span className="partyladen-lead">Lust auf Party?</span>
-            <span className="partyladen-sub">Partyartikel, Deko, Ballons &amp; Geschenke — jetzt bequem online bestellen bei</span>
+            <span className="partyladen-lead">Teamshirts fürs Turnier?</span>
+            <span className="partyladen-sub">Bedruckte Shirts mit Name und Nummer für euer Team, jetzt online bestellen bei</span>
           </span>
-          <img src="/partyladen.png" alt="partyladen.ch" className="partyladen-logo" />
-          <span className="partyladen-cta ui">Zum Shop →</span>
+          <img src="/trikko.svg" alt="trikko.ch" className="partyladen-logo" />
+          <span className="partyladen-cta ui">Zu Trikko →</span>
         </div>
       </a>
       <div className="topbar">

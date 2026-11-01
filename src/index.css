@@ -197,8 +197,8 @@ img {
 /* ─── Partyladen-Promo-Streifen über der Topbar ─── */
 .partyladen-strip {
   display: block;
-  background: linear-gradient(120deg, #d4f1f4 0%, #f4d8f4 50%, #fce7ec 100%);
-  border-bottom: 1px solid rgba(180, 130, 200, 0.2);
+  background: linear-gradient(120deg, #eef9c8 0%, #dff4a0 50%, #eef9c8 100%);
+  border-bottom: 1px solid rgba(12, 23, 18, 0.12);
   text-decoration: none;
   color: inherit;
   transition: filter 0.2s, transform 0.2s;
@@ -210,7 +210,7 @@ img {
 .partyladen-strip::after {
   content: '✦';
   position: absolute;
-  color: rgba(180, 130, 200, 0.35);
+  color: rgba(12, 23, 18, 0.25);
   font-family: 'Cormorant Garamond', serif;
   font-size: 20px;
   top: 50%;
@@ -250,7 +250,7 @@ img {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 19px;
   font-weight: 600;
-  color: #6b4a8a;
+  color: #0c1712;
   margin-bottom: 2px;
 }
 
@@ -258,7 +258,7 @@ img {
   font-family: 'Inter', sans-serif;
   font-size: 12.5px;
   font-weight: 500;
-  color: #5a4d6e;
+  color: #2f3a33;
 }
 
 .partyladen-logo {
@@ -274,13 +274,13 @@ img {
 
 .partyladen-cta {
   background: #fff;
-  color: #6b4a8a;
+  color: #0c1712;
   font-size: 13px;
   font-weight: 700;
   padding: 8px 16px;
   border-radius: 999px;
-  border: 1px solid rgba(180, 130, 200, 0.3);
-  box-shadow: 0 2px 8px rgba(120, 80, 150, 0.1);
+  border: 1px solid rgba(12, 23, 18, 0.2);
+  box-shadow: 0 2px 8px rgba(12, 23, 18, 0.08);
   white-space: nowrap;
   flex-shrink: 0;
 }
