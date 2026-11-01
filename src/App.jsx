@@ -443,8 +443,8 @@ function Terms() {
 function VisitUs() {
   const hours = [
     { day: 'Montag', time: 'Geschlossen', closed: true },
-    { day: 'Dienstag – Freitag', time: '08.30 – 11.30 · 13.30 – 18.00' },
-    { day: 'Samstag', time: '08.30 – 16.00' },
+    { day: 'Dienstag – Freitag', time: '09.00 – 11.30 · 14.00 – 18.00' },
+    { day: 'Samstag', time: '10.00 – 16.00' },
   ]
   return (
     <section className="info-section info-section-soft">
@@ -650,8 +650,8 @@ export function Footer() {
             <h4>Öffnungszeiten</h4>
             <p style={{ margin: 0, fontSize: 13, lineHeight: 1.7 }}>
               Mo geschlossen<br />
-              Di – Fr 08.30–11.30 · 13.30–18.00<br />
-              Sa 08.30–16.00
+              Di – Fr 09.00–11.30 · 14.00–18.00<br />
+              Sa 10.00–16.00
             </p>
           </div>
           <div>
