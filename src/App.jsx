@@ -478,6 +478,9 @@ function VisitUs() {
                 ))}
               </tbody>
             </table>
+            {noticeActive() && NOTICE.datum && (
+              <p className="hours-notice ui">⏰ {NOTICE.datum}: nur {NOTICE.zeit} geöffnet.</p>
+            )}
             <p className="visit-tip ui">💡 Tipp: Für eine entspannte Stöberzeit kommt am besten unter der Woche vorbei.</p>
           </div>
           <div className="visit-card">
@@ -505,6 +508,7 @@ const NOTICE = {
   tag: '2026-11-07',
   ab: '2026-11-06',
   label: 'Morgen, Samstag 7. November,',
+  datum: 'Samstag, 7. November',
   zeit: 'von 10:00 bis 14:00 Uhr',
 }
 
@@ -514,10 +518,15 @@ function todayISO() {
   return new Date(d.getTime() - off * 60000).toISOString().slice(0, 10)
 }
 
-function OpeningNotice() {
-  if (!NOTICE) return null
+function noticeActive() {
+  if (!NOTICE) return false
   const today = todayISO()
-  if (today < (NOTICE.ab || NOTICE.tag) || today > NOTICE.tag) return null
+  return today >= (NOTICE.ab || NOTICE.tag) && today <= NOTICE.tag
+}
+
+function OpeningNotice() {
+  if (!noticeActive()) return null
+  const today = todayISO()
   const text = today === NOTICE.tag
     ? `Heute haben wir nur ${NOTICE.zeit} geöffnet.`
     : `${NOTICE.label} haben wir nur ${NOTICE.zeit} geöffnet.`

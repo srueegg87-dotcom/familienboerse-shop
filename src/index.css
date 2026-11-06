@@ -1481,6 +1481,18 @@ img {
   font-style: italic;
 }
 
+.hours-notice {
+  background: linear-gradient(120deg, #ffe9a8 0%, #ffd6a0 100%);
+  border: 1px solid rgba(180, 120, 40, 0.25);
+  border-radius: var(--radius-lg);
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b4a10;
+  margin: 0 0 12px;
+  line-height: 1.5;
+}
+
 .visit-tip {
   background: var(--pastel-yellow);
   border-radius: var(--radius-lg);
