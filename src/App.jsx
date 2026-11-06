@@ -502,10 +502,10 @@ function VisitUs() {
 // Am Tag selbst steht „Heute", vorher der Wochentag. Nach `tag` verschwindet
 // der Hinweis von selbst. Zum Entfernen NOTICE = null setzen.
 const NOTICE = {
-  tag: '2026-10-17',
-  ab: '2026-10-16',
-  label: 'Morgen, Samstag 17. Oktober,',
-  zeit: 'von 09:00 bis 14:00 Uhr',
+  tag: '2026-11-07',
+  ab: '2026-11-06',
+  label: 'Morgen, Samstag 7. November,',
+  zeit: 'von 10:00 bis 14:00 Uhr',
 }
 
 function todayISO() {
