@@ -344,7 +344,8 @@ function HowItWorks() {
 }
 
 function WantedNow() {
-  const items = ['Lego', 'Duplo', 'Playmobil', 'Tiptoi-Bücher', 'Grosse Zewidecken']
+  const items = ['Lego', 'Playmobil', 'Tiptoi-Bücher', 'Grosse Zewidecken', 'Sitzerhöhungen für Kinder', 'Regenkleider, besonders Regenhosen']
+  const keineAnnahme = ['Stubenwagen', 'Damenhosen und Damenpullis', 'Babyartikel']
   return (
     <section className="info-section">
       <div className="container">
@@ -355,6 +356,11 @@ function WantedNow() {
             {items.map(x => <li key={x}>{x}</li>)}
           </ul>
           <p className="wanted-foot">Du hast etwas davon zuhause? Bring es gerne vorbei — wir freuen uns!</p>
+          {keineAnnahme.length > 0 && (
+            <p className="wanted-stop ui">
+              <strong>Zurzeit keine Annahme:</strong> {keineAnnahme.join(', ')}
+            </p>
+          )}
         </div>
       </div>
     </section>
